@@ -14,8 +14,9 @@
 
 package com.kll.collect.android.widgets;
 
-import java.util.ArrayList;
+
 import java.util.Vector;
+
 
 import org.javarosa.core.model.SelectChoice;
 import org.javarosa.core.model.data.IAnswerData;
@@ -23,49 +24,43 @@ import org.javarosa.core.model.data.SelectOneData;
 import org.javarosa.core.model.data.helper.Selection;
 import org.javarosa.form.api.FormEntryPrompt;
 import org.javarosa.xpath.expr.XPathFuncExpr;
+
+
 import com.kll.collect.android.R;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.Typeface;
 import android.util.Log;
-import android.util.TypedValue;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
-import android.widget.EditText;
-import android.widget.ListAdapter;
-import android.widget.Spinner;
-import android.widget.TextView;
 
-import com.kll.collect.android.application.Collect;
+
+
 import com.kll.collect.android.external.ExternalDataUtil;
+
+import com.kll.collect.android.views.ClearableAutoCompleteTextView;
 
 /**
  * SpinnerWidget handles select-one fields. Instead of a list of buttons it uses a spinner, wherein
  * the user clicks a button and the choices pop up in a dialogue box. The goal is to be more
  * compact. If images, audio, or video are specified in the select answers they are ignored.
- * z
+ *
  * @author Jeff Beorse (jeff@beorse.net)
  */
 public class SpinnerWidget extends QuestionWidget {
     Vector<SelectChoice> mItems;
-    Spinner spinner;
-    AutoCompleteTextView autoCompleteTextView;
+    ClearableAutoCompleteTextView  autoCompleteTextView;
     String[] choices;
+    final ArrayAdapter<String> adapter;
+
 
     private static final int BROWN = 0xFF936931;
-
+    int answerPosition = -1;
 
     public SpinnerWidget(Context context, FormEntryPrompt prompt) {
         super(context, prompt);
-        Log.i("Spineer is choosed", "Choosed");
+
         // SurveyCTO-added support for dynamic select content (from .csv files)
         XPathFuncExpr xPathFuncExpr = ExternalDataUtil.getSearchXPathExpression(prompt.getAppearanceHint());
         if (xPathFuncExpr != null) {
@@ -74,68 +69,90 @@ public class SpinnerWidget extends QuestionWidget {
             mItems = prompt.getSelectChoices();
         }
 
+        autoCompleteTextView = new ClearableAutoCompleteTextView(context);
+        choices = new String[mItems.size()];
 
-        // spinner = new Spinner(context);
-        Log.i("happy","dashain");
-        autoCompleteTextView = new AutoCompleteTextView(context);
-
-        choices = new String[mItems.size() + 1];
         for (int i = 0; i < mItems.size(); i++) {
             choices[i] = prompt.getSelectChoiceText(mItems.get(i));
+
+
         }
-        choices[mItems.size()] = getContext().getString(R.string.select_one);
 
-        // The spinner requires a custom adapter. It is defined below
-       /* final SpinnerAdapter adapter =
-                new SpinnerAdapter(getContext(), android.R.layout.simple_spinner_item, choices,
-                        TypedValue.COMPLEX_UNIT_DIP, mQuestionFontsize);*/
-        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),R.layout.custom_autocomplete,choices);
+        adapter = new ArrayAdapter<String>(getContext(),android.R.layout.simple_spinner_dropdown_item,choices);
+
         autoCompleteTextView.setAdapter(adapter);
+        autoCompleteTextView.setThreshold(1);
+        autoCompleteTextView.enoughToFilter();
+        autoCompleteTextView.setCursorVisible(true);
+        autoCompleteTextView.hideClearButton();
+        autoCompleteTextView.setHint(R.string.select_one);
 
-       /* spinner.setAdapter(adapter);
+        autoCompleteTextView.setOnFocusChangeListener(new OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
 
-        spinner.setPrompt(prompt.getQuestionText());
-        spinner.setEnabled(!prompt.isReadOnly());
-        spinner.setFocusable(!prompt.isReadOnly());
+                autoCompleteTextView.showDropDown();
 
+            }
+        });
 
+        autoCompleteTextView.setOnClearListener(new ClearableAutoCompleteTextView.OnClearListener() {
 
-        // Fill in previous answer
+            @Override
+            public void onClear() {
+                clearSelection();
+            }
+        });
+
         String s = null;
         if (prompt.getAnswerValue() != null) {
             s = ((Selection) prompt.getAnswerValue().getValue()).getValue();
+            Log.i("Answer s",s);
         }
 
-        spinner.setSelection(mItems.size());
+        // autoCompleteTextView.setText(R.string.select_one);
         if (s != null) {
             for (int i = 0; i < mItems.size(); ++i) {
                 String sMatch = mItems.get(i).getValue();
                 if (sMatch.equals(s)) {
-                    spinner.setSelection(i);
+                    Log.i("Answer sMatch", sMatch);
+                    autoCompleteTextView.setText("");
+                    autoCompleteTextView.setText(prompt.getAnswerText(),false);
+                    Log.i("Answer selected", prompt.getAnswerText());
+                    answerPosition = i;
+                    Log.i("Answer pos",Integer.toString(answerPosition));
+                    autoCompleteTextView.showClearButton();
+                    autoCompleteTextView.setFocusable(false);
+                    autoCompleteTextView.setFocusableInTouchMode(false);
                 }
             }
         }
 
-        spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+        autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
-			@Override
-			public void onItemSelected(AdapterView<?> parent, View view,
-					int position, long id) {
-				if ( position == mItems.size() ) {
-					Collect.getInstance().getActivityLogger().logInstanceAction(this, "onCheckedChanged.clearValue",
-		    			"", mPrompt.getIndex());
-				} else {
-					Collect.getInstance().getActivityLogger().logInstanceAction(this, "onCheckedChanged",
-			    			mItems.get(position).getValue(), mPrompt.getIndex());
-				}
-			}
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String selection = (String) parent.getItemAtPosition(position);
+                int pos = -1;
+                for (int i = 0; i < choices.length; i++) {
+                    if (choices[i].equals(selection)) {
+                        answerPosition = i;
+                    }
+                }
+                autoCompleteTextView.showClearButton();
+                autoCompleteTextView.setFocusable(false);
+                autoCompleteTextView.setFocusableInTouchMode(false);
+                InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(autoCompleteTextView.getWindowToken(), 0);
+                Log.i("answer position", String.valueOf(answerPosition));
 
-			@Override
-			public void onNothingSelected(AdapterView<?> arg0) {
+            }
+        });
 
-			}});*/
 
-       // addView(spinner);
+
+
+
 
         addView(autoCompleteTextView);
 
@@ -143,135 +160,54 @@ public class SpinnerWidget extends QuestionWidget {
 
     @Override
     public IAnswerData getAnswer() {
-        return null;
-    }
-
-    @Override
-    public void clearAnswer() {
-
-    }
-
-    @Override
-    public void setFocus(Context context) {
-
-    }
-
-    @Override
-    public void setOnLongClickListener(OnLongClickListener l) {
-
-    }
-
-
-
-    /*@Override
-    public IAnswerData getAnswer() {
-    	clearFocus();
-        int i = spinner.getSelectedItemPosition();
+        clearFocus();
+        int i = answerPosition;
         if (i == -1 || i == mItems.size()) {
             return null;
         } else {
             SelectChoice sc = mItems.elementAt(i);
+
             return new SelectOneData(new Selection(sc));
         }
     }
 
-
     @Override
     public void clearAnswer() {
-        // It seems that spinners cannot return a null answer. This resets the answer
-        // to its original value, but it is not null.
-        spinner.setSelection(mItems.size());
+        autoCompleteTextView.setText(R.string.select_one);
     }
-
 
     @Override
     public void setFocus(Context context) {
-        // Hide the soft keyboard if it's showing.
         InputMethodManager inputManager =
-            (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+                (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
         inputManager.showSoftInputFromInputMethod(this.getWindowToken(), 0);
-
-    }
-    */
-
-    // Defines how to display the select answers
-    private class SpinnerAdapter extends ArrayAdapter<String> {
-        Context context;
-        String[] items = new String[]{};
-        int textUnit;
-        float textSize;
-
-
-        public SpinnerAdapter(final Context context, final int textViewResourceId,
-                              final String[] objects, int textUnit, float textSize) {
-            super(context, textViewResourceId, objects);
-            this.items = objects;
-            this.context = context;
-            this.textUnit = textUnit;
-            this.textSize = textSize;
-        }
-
-        @Override
-        // Defines the text view parameters for the drop down list entries
-        public View getDropDownView(int position, View convertView, ViewGroup parent) {
-
-            if (convertView == null) {
-                LayoutInflater inflater = LayoutInflater.from(context);
-                convertView = inflater.inflate(R.layout.custom_spinner_item, parent, false);
-            }
-
-           TextView tv = (TextView) convertView.findViewById(android.R.id.text1);
-            tv.setTextSize(textUnit, textSize);
-            tv.setBackgroundColor(Color.WHITE);
-        	tv.setPadding(10, 10, 10, 10); // Are these values OK?
-            if (position == items.length-1) {
-            	tv.setText(parent.getContext().getString(R.string.clear_answer));
-            	tv.setTextColor(BROWN);
-        		tv.setTypeface(null, Typeface.NORMAL);
-            	if (spinner.getSelectedItemPosition() == position) {
-            		tv.setBackgroundColor(Color.LTGRAY);
-            	}
-            } else {
-                tv.setText(items[position]);
-                tv.setTextColor(Color.BLACK);
-            	tv.setTypeface(null, (spinner.getSelectedItemPosition() == position) 
-            							? Typeface.BOLD : Typeface.NORMAL);
-            }
-            return convertView;
-        }
-
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            if (convertView == null) {
-                LayoutInflater inflater = LayoutInflater.from(context);
-                convertView = inflater.inflate(android.R.layout.simple_spinner_item, parent, false);
-            }
-
-           TextView tv = (TextView) convertView.findViewById(android.R.id.text1);
-            tv.setText(items[position]);
-            tv.setTextSize(textUnit, textSize);
-            tv.setTextColor(Color.BLACK);
-        	tv.setTypeface(null, Typeface.BOLD);
-            if (position == items.length-1) {
-            	tv.setTextColor(BROWN);
-            	tv.setTypeface(null, Typeface.NORMAL);
-            }
-            return convertView;
-        }
-
     }
 
-
-   /* @Override
+    @Override
     public void setOnLongClickListener(OnLongClickListener l) {
-        spinner.setOnLongClickListener(l);
+        autoCompleteTextView.setOnLongClickListener(l);
     }
-
 
     @Override
     public void cancelLongPress() {
         super.cancelLongPress();
-        spinner.cancelLongPress();
-    }*/
+        autoCompleteTextView.cancelLongPress();
+    }
+
+
+
+
+    protected void clearSelection() {
+
+        answerPosition = -1;
+        autoCompleteTextView.hideClearButton();
+        autoCompleteTextView.setAdapter(adapter);
+        autoCompleteTextView.setText("");
+        autoCompleteTextView.showDropDown();
+
+        // hide the keyboard
+        InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(autoCompleteTextView.getWindowToken(), 0);
+
+    }
 }
