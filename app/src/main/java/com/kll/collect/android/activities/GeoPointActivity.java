@@ -48,6 +48,7 @@ public class GeoPointActivity extends Activity implements LocationListener {
     private int mLocationCount = 0;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
