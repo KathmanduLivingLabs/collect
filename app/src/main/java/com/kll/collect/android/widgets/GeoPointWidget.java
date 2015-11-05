@@ -30,6 +30,10 @@ import com.kll.collect.android.utilities.CompatibilityUtils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -45,16 +49,17 @@ import android.widget.TextView;
  * @author Carl Hartung (carlhartung@gmail.com)
  * @author Yaw Anokwa (yanokwa@gmail.com)
  */
-public class GeoPointWidget extends QuestionWidget implements IBinaryWidget {
+public class GeoPointWidget extends QuestionWidget implements IBinaryWidget, LocationListener{
 	public static final String LOCATION = "gp";
 	public static final String ACCURACY_THRESHOLD = "accuracyThreshold";
 	public static final String READ_ONLY = "readOnly";
+
+	public static boolean locationRecorded = false;
 
 	public static final double DEFAULT_LOCATION_ACCURACY = 5.0;
 
 	private Button mGetLocationButton;
 	private Button mViewButton;
-
 	private TextView mStringAnswer;
 	private TextView mAnswerDisplay;
 	private final boolean mReadOnly;
@@ -65,6 +70,8 @@ public class GeoPointWidget extends QuestionWidget implements IBinaryWidget {
 
 	public GeoPointWidget(Context context, FormEntryPrompt prompt) {
 		super(context, prompt);
+
+
 
 		// Determine the activity threshold to use
 		String acc = prompt.getQuestion().getAdditionalAttribute(null, ACCURACY_THRESHOLD);
@@ -203,7 +210,9 @@ public class GeoPointWidget extends QuestionWidget implements IBinaryWidget {
 						.setIndexWaitingForData(mPrompt.getIndex());
 				((Activity) getContext()).startActivityForResult(i,
 						FormEntryActivity.LOCATION_CAPTURE);
+				locationRecorded = true;
 			}
+
 		});
 
 		// finish complex layout
@@ -223,6 +232,9 @@ public class GeoPointWidget extends QuestionWidget implements IBinaryWidget {
 		updateButtonLabelsAndVisibility(dataAvailable);
 
 	}
+
+
+
 
 	private void updateButtonLabelsAndVisibility(boolean dataAvailable) {
 		// BUT for mapsV2, we only show the mGetLocationButton, altering its text.
@@ -377,4 +389,23 @@ public class GeoPointWidget extends QuestionWidget implements IBinaryWidget {
 		mAnswerDisplay.cancelLongPress();
 	}
 
+	@Override
+	public void onLocationChanged(Location location) {
+
+	}
+
+	@Override
+	public void onStatusChanged(String provider, int status, Bundle extras) {
+
+	}
+
+	@Override
+	public void onProviderEnabled(String provider) {
+
+	}
+
+	@Override
+	public void onProviderDisabled(String provider) {
+
+	}
 }
