@@ -61,8 +61,8 @@ public class InstanceChooserList extends ListActivity {
         setTitle(getString(R.string.app_name) + " > " + getString(R.string.review_data));
         TextView tv = (TextView) findViewById(R.id.status_text);
         tv.setVisibility(View.GONE);
-        String selection = InstanceColumns.STATUS + " != ? and " + InstanceColumns.STATUS + " != ?";
-        String[] selectionArgs = {InstanceProviderAPI.STATUS_ATTACHMENT_NOT_SENT,InstanceProviderAPI.STATUS_SUBMITTED};
+        String selection = InstanceColumns.STATUS + " != ? and " + InstanceColumns.STATUS + " != ? and " + InstanceColumns.STATUS + "!=?";
+        String[] selectionArgs = {InstanceProviderAPI.STATUS_ATTACHMENT_NOT_SENT,InstanceProviderAPI.STATUS_SUBMITTED,InstanceProviderAPI.STATUS_SUBMISSION_FAILED};
         String sortOrder = InstanceColumns.STATUS + " DESC, " + InstanceColumns.DISPLAY_NAME + " ASC";
         Cursor c = managedQuery(InstanceColumns.CONTENT_URI, null, selection, selectionArgs, sortOrder);
 
