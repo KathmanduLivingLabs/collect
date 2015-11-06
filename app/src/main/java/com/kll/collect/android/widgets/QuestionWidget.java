@@ -20,6 +20,7 @@ import java.util.List;
 import org.javarosa.core.model.data.IAnswerData;
 import org.javarosa.form.api.FormEntryPrompt;
 
+import com.kll.collect.android.R;
 import com.kll.collect.android.application.Collect;
 import com.kll.collect.android.views.MediaLayout;
 
@@ -29,14 +30,18 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.opengl.Visibility;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 public abstract class QuestionWidget extends LinearLayout {
 
@@ -56,6 +61,9 @@ public abstract class QuestionWidget extends LinearLayout {
 	}
 
     private LinearLayout.LayoutParams mLayout;
+    private LinearLayout.LayoutParams mToggleLayout;
+    private LinearLayout.LayoutParams mLinearLayout;
+    private RelativeLayout.LayoutParams mRelativeLayout;
     protected FormEntryPrompt mPrompt;
 
     protected final int mQuestionFontsize;
@@ -64,6 +72,8 @@ public abstract class QuestionWidget extends LinearLayout {
     private TextView mQuestionText;
     private MediaLayout mediaLayout;
     private TextView mHelpText;
+    private Button mHelpButton;
+    private Button mCloseButton;
 
 
     public QuestionWidget(Context context, FormEntryPrompt p) {
@@ -79,10 +89,19 @@ public abstract class QuestionWidget extends LinearLayout {
         setPadding(0, 7, 0, 0);
 
         mLayout =
-            new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT,
+            new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT);
-        mLayout.setMargins(10, 0, 10, 0);
 
+        mToggleLayout =
+                new LinearLayout.LayoutParams(new ViewGroup.LayoutParams(40,40));
+
+        mRelativeLayout =
+                new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT);
+        mLinearLayout =
+                new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT);
+        mLayout.setMargins(10, 0, 10, 0);
         addQuestionText(p);
         addHelpText(p);
 
@@ -206,16 +225,71 @@ public abstract class QuestionWidget extends LinearLayout {
         String s = p.getHelpText();
 
         if (s != null && !s.equals("")) {
+            LinearLayout ll1 = new LinearLayout(getContext());
+            LinearLayout ll2 = new LinearLayout(getContext());
+            RelativeLayout realativeLayout = new RelativeLayout(getContext());
+
+
+
             mHelpText = new TextView(getContext());
-            mHelpText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, mQuestionFontsize - 3);
+
+            mHelpButton = new Button(getContext());
+            mCloseButton = new Button(getContext());
+             mHelpText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, mQuestionFontsize - 3);
             mHelpText.setPadding(0, -5, 0, 7);
             // wrap to the widget of view
             mHelpText.setHorizontallyScrolling(false);
             mHelpText.setText(s);
             mHelpText.setTypeface(null, Typeface.ITALIC);
+            ll2.setLayoutParams(mLinearLayout);
+             ll1.addView(mHelpText, mLayout);
+            ll1.setGravity(Gravity.LEFT);
+            mHelpButton.setText(null);
+            mHelpButton.setBackgroundResource(android.R.drawable.ic_menu_help);
+            mHelpButton.setGravity(Gravity.RIGHT);
 
-            addView(mHelpText, mLayout);
+            mCloseButton.setText(null);
+            mCloseButton.setBackgroundResource(android.R.drawable.ic_menu_close_clear_cancel);
+            mCloseButton.setVisibility(View.GONE);
+            mCloseButton.setGravity(Gravity.RIGHT);
+            ll2.addView(mHelpButton, mToggleLayout);
+            ll2.addView(mCloseButton, mToggleLayout);
+            ll2.setGravity(Gravity.RIGHT);
+
+            realativeLayout.setLayoutParams(mLinearLayout);
+            mHelpText.setVisibility(View.GONE);
+            mRelativeLayout.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+           realativeLayout.addView(ll1);
+            realativeLayout.addView(ll2,mRelativeLayout);
+            addView(realativeLayout, mLayout);
+            mHelpButton.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showHint();
+                }
+            });
+            mCloseButton.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    removeHint();
+                }
+            });
+
         }
+    }
+
+    private void removeHint() {
+        mHelpText.setVisibility(View.GONE);
+        mCloseButton.setVisibility(View.GONE);
+        mHelpButton.setVisibility(View.VISIBLE);
+       //removeView(mHelpText);
+    }
+
+    private void showHint() {
+        mHelpText.setVisibility(View.VISIBLE);
+        mHelpButton.setVisibility(View.GONE);
+        mCloseButton.setVisibility(View.VISIBLE);
+
     }
 
 
