@@ -103,7 +103,7 @@ public abstract class QuestionWidget extends LinearLayout {
                         LinearLayout.LayoutParams.WRAP_CONTENT);
         mLayout.setMargins(10, 0, 10, 0);
         addQuestionText(p);
-        addHelpText(p);
+       // addHelpText(p);
 
     }
 
@@ -187,32 +187,104 @@ public abstract class QuestionWidget extends LinearLayout {
         String imageURI = p.getImageText();
         String audioURI = p.getAudioText();
         String videoURI = p.getSpecialFormQuestionText("video");
-
+        String s = p.getHelpText();
         // shown when image is clicked
         String bigImageURI = p.getSpecialFormQuestionText("big-image");
 
         String promptText = p.getLongText();
-        // Add the text view. Textview always exists, regardless of whether there's text.
-        mQuestionText = new TextView(getContext());
-        mQuestionText.setBackgroundColor(0xFFC0C0C0);
-        mQuestionText.setText(promptText == null ? "" : promptText);
-        mQuestionText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, mQuestionFontsize);
-        mQuestionText.setTypeface(null, Typeface.BOLD);
-        mQuestionText.setPadding(0, 0, 0, 7);
-        mQuestionText.setId(QuestionWidget.newUniqueId()); // assign random id
+        if (s != null && !s.equals("")) {
+            LinearLayout ll1 = new LinearLayout(getContext());
+            LinearLayout ll2 = new LinearLayout(getContext());
+            RelativeLayout realativeLayout = new RelativeLayout(getContext());
 
-        // Wrap to the size of the parent view
-        mQuestionText.setHorizontallyScrolling(false);
+            mQuestionText = new TextView(getContext());
+            mQuestionText.setBackgroundColor(0xFFC0C0C0);
+            mQuestionText.setText(promptText == null ? "" : promptText);
+            mQuestionText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, mQuestionFontsize);
+            mQuestionText.setTypeface(null, Typeface.BOLD);
+            mQuestionText.setPadding(0, 0,0, 7);
+            mQuestionText.setId(QuestionWidget.newUniqueId()); // assign random id
 
-        if (promptText == null || promptText.length() == 0) {
-            mQuestionText.setVisibility(GONE);
+            mHelpText = new TextView(getContext());
+            mHelpText.setHorizontallyScrolling(false);
+            mHelpText.setText(s);
+            mHelpText.setTypeface(null, Typeface.ITALIC);
+
+            // Wrap to the size of the parent view
+            mQuestionText.setHorizontallyScrolling(false);
+
+            if (promptText == null || promptText.length() == 0) {
+                mQuestionText.setVisibility(GONE);
+            }
+            mHelpButton = new Button(getContext());
+            mCloseButton = new Button(getContext());
+            // Create the layout for audio, image, text
+            mediaLayout = new MediaLayout(getContext());
+
+            mediaLayout.setAVT(p.getIndex(), "", mQuestionText, audioURI, imageURI, videoURI, bigImageURI);
+
+            ll2.setLayoutParams(mLinearLayout);
+            ll1.addView(mediaLayout, mLayout);
+            ll1.setGravity(Gravity.LEFT);
+            ll2.setPadding(0,4,4,0);
+
+            mHelpButton.setText(null);
+            mHelpButton.setBackgroundResource(android.R.drawable.ic_menu_help);
+            mHelpButton.setGravity(Gravity.RIGHT);
+
+            mCloseButton.setText(null);
+            mCloseButton.setBackgroundResource(android.R.drawable.ic_menu_close_clear_cancel);
+            mCloseButton.setVisibility(View.GONE);
+            mCloseButton.setGravity(Gravity.RIGHT);
+            ll2.addView(mHelpButton, mToggleLayout);
+            ll2.addView(mCloseButton, mToggleLayout);
+            ll2.setGravity(Gravity.RIGHT);
+
+            realativeLayout.setLayoutParams(mLinearLayout);
+            mHelpText.setVisibility(View.GONE);
+            mRelativeLayout.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+            realativeLayout.addView(ll1);
+            realativeLayout.addView(ll2, mRelativeLayout);
+            addView(realativeLayout, mLayout);
+            addView(mHelpText,mLayout);
+            mHelpButton.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showHint();
+                }
+            });
+            mCloseButton.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    removeHint();
+                }
+            });
+        }
+        else {
+            // Add the text view. Textview always exists, regardless of whether there's text.
+            mQuestionText = new TextView(getContext());
+            mQuestionText.setBackgroundColor(0xFFC0C0C0);
+            mQuestionText.setText(promptText == null ? "" : promptText);
+            mQuestionText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, mQuestionFontsize);
+            mQuestionText.setTypeface(null, Typeface.BOLD);
+            mQuestionText.setPadding(0, 0, 0, 7);
+            mQuestionText.setId(QuestionWidget.newUniqueId()); // assign random id
+
+            // Wrap to the size of the parent view
+            mQuestionText.setHorizontallyScrolling(false);
+
+            if (promptText == null || promptText.length() == 0) {
+                mQuestionText.setVisibility(GONE);
+            }
+
+            // Create the layout for audio, image, text
+            mediaLayout = new MediaLayout(getContext());
+            mediaLayout.setAVT(p.getIndex(), "", mQuestionText, audioURI, imageURI, videoURI, bigImageURI);
+
+
+            addView(mediaLayout, mLayout);
         }
 
-        // Create the layout for audio, image, text
-        mediaLayout = new MediaLayout(getContext());
-        mediaLayout.setAVT(p.getIndex(), "", mQuestionText, audioURI, imageURI, videoURI, bigImageURI);
-
-        addView(mediaLayout, mLayout);
     }
 
 
