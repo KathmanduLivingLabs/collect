@@ -202,6 +202,8 @@ public class SpinnerWidget extends QuestionWidget {
         answerPosition = -1;
         autoCompleteTextView.hideClearButton();
         autoCompleteTextView.setAdapter(adapter);
+        autoCompleteTextView.setFocusable(true);
+        autoCompleteTextView.setFocusableInTouchMode(true);
         autoCompleteTextView.setText("");
         autoCompleteTextView.showDropDown();
 
