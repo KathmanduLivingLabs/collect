@@ -283,6 +283,7 @@ public class FormEntryActivity extends Activity implements AnimationListener,
 			createErrorDialog(e.getMessage(), EXIT);
 			return;
 		}
+		Log.i("Activity","Created");
 		 mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 		mSharedPreferences.registerOnSharedPreferenceChangeListener(new SharedPreferences.OnSharedPreferenceChangeListener() {
 			@Override
@@ -331,6 +332,17 @@ public class FormEntryActivity extends Activity implements AnimationListener,
 				showPreviousView();
 			}
 		});
+
+
+		GeoPointWidget.locationRecorded = false;
+
+		needLocation = mSharedPreferences.getBoolean(PreferencesActivity.KEY_GPS_FIX, false);
+		if(needLocation){
+
+			mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+			mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5, this);
+		}
+
 
 		// Load JavaRosa modules. needed to restore forms.
 		new XFormsModule().registerModule();
@@ -2463,9 +2475,6 @@ public class FormEntryActivity extends Activity implements AnimationListener,
 		FormController formController = Collect.getInstance()
 				.getFormController();
 		dismissDialogs();
-		if(mLocationManager!=null) {
-			mLocationManager.removeUpdates(this);
-		}
 		// make sure we're not already saving to disk. if we are, currentPrompt
 		// is getting constantly updated
 		if (mSaveToDiskTask == null
@@ -2482,6 +2491,7 @@ public class FormEntryActivity extends Activity implements AnimationListener,
 	@Override
 	protected void onResume() {
 		super.onResume();
+		Log.i("Activity","Resume");
 		Log.i("Location Recorded", Boolean.toString(GeoPointWidget.locationRecorded));
 		Log.i("Reverse",Boolean.toString(!GeoPointWidget.locationRecorded));
 		Boolean gpsTag = true;
@@ -2594,6 +2604,7 @@ public class FormEntryActivity extends Activity implements AnimationListener,
 
 	@Override
 	protected void onDestroy() {
+		Log.i("Activity","Destroyed");
 		if(mLocationManager!=null) {
 			mLocationManager.removeUpdates(this);
 		}
@@ -2683,17 +2694,12 @@ public class FormEntryActivity extends Activity implements AnimationListener,
 	public void loadingComplete(FormLoaderTask task) {
 		dismissDialog(PROGRESS_DIALOG);
 		Log.i("Form Loading", "Complete");
-		GeoPointWidget.locationRecorded = false;
 		FormController formController = task.getFormController();
 		boolean pendingActivityResult = task.hasPendingActivityResult();
 		boolean hasUsedSavepoint = task.hasUsedSavepoint();
 		int requestCode = task.getRequestCode();
 		Log.i("Location Recorded",Boolean.toString(GeoPointWidget.locationRecorded));
-		needLocation = mSharedPreferences.getBoolean(PreferencesActivity.KEY_GPS_FIX, false);
-		if(needLocation){
-			mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-			mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5, this);
-		}// these are bogus if
+		// these are bogus if
 		Log.i("Reqest Code",Integer.toString(requestCode));// pendingActivityResult is
 													// false
 		int resultCode = task.getResultCode();
@@ -3095,7 +3101,12 @@ public class FormEntryActivity extends Activity implements AnimationListener,
 	@Override
 	protected void onStart() {
 		super.onStart();
-		if(mLocationManager!=null) {
+		Log.i("Activity","Start");
+		Log.i("Location Recorded", Boolean.toString(GeoPointWidget.locationRecorded));
+		Log.i("Reverse",Boolean.toString(!GeoPointWidget.locationRecorded));
+		Boolean gpsTag = true;
+		gpsTag = !GeoPointWidget.locationRecorded;
+		if(mLocationManager!=null && gpsTag) {
 			mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5, this);
 		}
 		Collect.getInstance().getActivityLogger().logOnStart(this);
@@ -3103,6 +3114,7 @@ public class FormEntryActivity extends Activity implements AnimationListener,
 
 	@Override
 	protected void onStop() {
+		Log.i("Activity","Stop");
 		Collect.getInstance().getActivityLogger().logOnStop(this);
 		if(mLocationManager!=null) {
 			mLocationManager.removeUpdates(this);
