@@ -226,14 +226,14 @@ public abstract class QuestionWidget extends LinearLayout {
             ll2.setLayoutParams(mLinearLayout);
             ll1.addView(mediaLayout, mLayout);
             ll1.setGravity(Gravity.LEFT);
-            ll2.setPadding(0,4,4,0);
+            ll2.setPadding(0,8,12,0);
 
             mHelpButton.setText(null);
-            mHelpButton.setBackgroundResource(android.R.drawable.ic_menu_help);
+            mHelpButton.setBackgroundResource(R.drawable.questionmark);
             mHelpButton.setGravity(Gravity.RIGHT);
 
             mCloseButton.setText(null);
-            mCloseButton.setBackgroundResource(android.R.drawable.ic_menu_close_clear_cancel);
+            mCloseButton.setBackgroundResource(R.drawable.cross);
             mCloseButton.setVisibility(View.GONE);
             mCloseButton.setGravity(Gravity.RIGHT);
             ll2.addView(mHelpButton, mToggleLayout);
@@ -307,14 +307,14 @@ public abstract class QuestionWidget extends LinearLayout {
 
             mHelpButton = new Button(getContext());
             mCloseButton = new Button(getContext());
-             mHelpText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, mQuestionFontsize - 3);
-            mHelpText.setPadding(0, -5, 0, 7);
+            mHelpText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, mQuestionFontsize - 3);
+            mHelpText.setPadding(5, -5, 4, 7);
             // wrap to the widget of view
             mHelpText.setHorizontallyScrolling(false);
             mHelpText.setText(s);
             mHelpText.setTypeface(null, Typeface.ITALIC);
             ll2.setLayoutParams(mLinearLayout);
-             ll1.addView(mHelpText, mLayout);
+            ll1.addView(mHelpText, mLayout);
             ll1.setGravity(Gravity.LEFT);
             mHelpButton.setText(null);
             mHelpButton.setBackgroundResource(android.R.drawable.ic_menu_help);
@@ -331,7 +331,7 @@ public abstract class QuestionWidget extends LinearLayout {
             realativeLayout.setLayoutParams(mLinearLayout);
             mHelpText.setVisibility(View.GONE);
             mRelativeLayout.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-           realativeLayout.addView(ll1);
+            realativeLayout.addView(ll1);
             realativeLayout.addView(ll2,mRelativeLayout);
             addView(realativeLayout, mLayout);
             mHelpButton.setOnClickListener(new OnClickListener() {
