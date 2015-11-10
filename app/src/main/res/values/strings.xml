@@ -16,8 +16,8 @@
 -->
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
 
-    <string name="accept_location">Record Location</string>
-    <string name="accuracy">Accuracy</string>
+    <string name="accept_location">लोकेशन रेकर्ड गर्नुहोस</string>
+    <string name="accuracy">यकूरेसी</string>
     <string name="activity_not_found">No activity found to handle: %s</string>
     <string name="add_another">Add Group</string>
     <string name="add_another_repeat">Add another \"%s\" group?</string>
@@ -25,7 +25,7 @@
     <string name="add_repeat">Add a new \"%s\" group?</string>
     <string name="add_repeat_no">Do Not Add</string>
     <string name="advance">forward to\nnext\nprompt</string>
-    <string name="altitude">Altitude</string>
+    <string name="altitude">ऊचाइ</string>
     <string name="audio_file_error">No audio file was specified.</string>
     <string name="audio_file_invalid">File: %s is not a valid audio file.</string>
     <string name="backup">backward to\nprevious\nprompt</string>
@@ -36,7 +36,7 @@
     <string name="cancel_saving_form">Cancel</string>
     <string name="cannot_edit_completed_form">This form cannot be edited once it has been marked as complete. It may be encrypted.</string>
     <string name="capture_audio">Record Sound</string>
-    <string name="capture_image">Take Picture</string>
+    <string name="capture_image">फोटो लिनुहोस्</string>
     <string name="capture_video">Record Video</string>
     <string name="change_language">Change Language</string>
     <string name="change_password">ODK Password</string>
@@ -83,16 +83,16 @@
     <string name="file_missing">File: %s is missing.</string>
     <string name="finished_disk_scan">Finished scanning. All forms loaded.</string>
     <string name="forms">Blank Forms</string>
-    <string name="getting_location">Loading Location</string>
+    <string name="getting_location">उपयुक्त यकूरेसी पाएपछि लोकेशन रेकोर्ड गर्नुहोस</string>
     <string name="get_barcode">Get Barcode</string>
     <string name="get_forms">Get Blank Form</string>
-    <string name="get_location">Record Location</string>
+    <string name="get_location">लोकेशन रेकर्ड गर्नुहोस</string>
     <string name="provider_disabled_error">Sorry, Location providers are disabled!</string>
     <string name="invalid_answer_error">Sorry, this response is invalid!</string>
     <string name="jump_to_beginning">Go To Start</string>
     <string name="jump_to_end">Go To End</string>
     <string name="jump_to_previous">Go Up</string>
-    <string name="latitude">Latitude</string>
+    <string name="latitude">अक्षांश</string>
     <string name="leave_repeat_yes">Do Not Add</string>
     <string name="leaving_repeat_ask">Add One More Group?</string>
     <string name="list_failed_with_error">Form listing failed. %s.</string>
@@ -100,7 +100,7 @@
     <string name="load_remote_form_error">Error Getting Form List</string>
     <string name="location_provider_accuracy">Using %1$s. Accuracy is %2$s m.</string>
     <string name="location_accuracy">Accuracy is %1$s m</string>
-    <string name="longitude">Longitude</string>
+    <string name="longitude">देशान्तर</string>
     <string name="main_menu">Main Menu</string>
     <string name="main_menu_details">Data collection made easier&#8230;</string>
     <string name="manage_files">Delete Saved Form</string>
@@ -123,7 +123,7 @@
     <string name="quit_entry">Save Form and Exit</string>
     <string name="refresh">Refresh</string>
     <string name="replace_barcode">Replace Barcode</string>
-    <string name="replace_location">Replace Location</string>
+    <string name="replace_location">लोकेशन परिवर्तन गर्नुहोस</string>
     <string name="required_answer_error">Sorry, this response is required!</string>
     <string name="review_data">Edit Saved Form</string>
     <string name="review_data_button">Edit Saved Form (%s)</string>
@@ -183,7 +183,7 @@
     <string name="xform_parse_error">XForm parse error. %1$s is missing element %2$s</string>
     <string name="choose_sound">Choose Sound</string>
     <string name="choose_video">Choose Video</string>
-    <string name="choose_image">Choose Image</string>
+    <string name="choose_image">फोटो छान्नुहोस्</string>
     <string name="selected">Selected: </string>
     <string name="select_answer">Select Answer</string>
     <string name="save_form_as">Name this form</string>
@@ -321,7 +321,7 @@
     <string name="change_oflinelayers_url">Change Offline Layer Location</string>
     <string name="record_geoshape">Record GeoShape</string>
     <string name="title_activity_geo_shape">GeoShapeActivity</string>
-    <string name="geoodk_mainTitle">Data Collection &amp; Mapping</string>
+    <string name="geoodk_mainTitle">Data Collection for Nepal Housing Reconstruction Program</string>
     <string name="title_activity_geo_trace">GeoTraceActivity</string>
     <string name="view_shape">Edit Shape</string>
     <string name="record_trace">Record GeoTrace</string>

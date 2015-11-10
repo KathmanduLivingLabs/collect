@@ -288,12 +288,13 @@ public class FormEntryActivity extends Activity implements AnimationListener,
 		mSharedPreferences.registerOnSharedPreferenceChangeListener(new SharedPreferences.OnSharedPreferenceChangeListener() {
 			@Override
 			public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-				compressImage = mSharedPreferences.getBoolean(PreferencesActivity.KEY_ENABLE_IMAGE_COMPRESSION,false);
+				compressImage = mSharedPreferences.getBoolean(PreferencesActivity.KEY_ENABLE_IMAGE_COMPRESSION, false);
 			}
 		});
 		setContentView(R.layout.form_entry);
-		setTitle(getString(R.string.app_name) + " > "
-				+ getString(R.string.loading_form));
+/*		setTitle(getString(R.string.app_name) + " > "
+				+ getString(R.string.loading_form));*/
+		setTitle(getString(R.string.app_name));
 
 		Log.i("Entry", "Form");
 		mErrorMessage = null;
@@ -1178,8 +1179,8 @@ public class FormEntryActivity extends Activity implements AnimationListener,
 	private View createView(int event, boolean advancingPage,int swipeCase) {
 		FormController formController = Collect.getInstance()
 				.getFormController();
-		setTitle(getString(R.string.app_name) + " > "
-				+ formController.getFormTitle());
+	/*	setTitle(getString(R.string.app_name) + " > "
+				+ formController.getFormTitle());*/
 		int questioncount = formController.getFormDef().getDeepChildCount();
 
 		switch (event) {
@@ -1188,8 +1189,8 @@ public class FormEntryActivity extends Activity implements AnimationListener,
 			progressUpdate(progressValue,questioncount);
 			View startView = View
 					.inflate(this, R.layout.form_entry_start, null);
-			setTitle(getString(R.string.app_name) + " > "
-					+ formController.getFormTitle());
+			/*setTitle(getString(R.string.app_name) + " > "
+					+ formController.getFormTitle());*/
 
 			Drawable image = null;
 			File mediaFolder = formController.getMediaFolder();
