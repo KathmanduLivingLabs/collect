@@ -85,7 +85,13 @@ public class SpinnerWidget extends QuestionWidget {
         autoCompleteTextView.enoughToFilter();
         autoCompleteTextView.setCursorVisible(true);
         autoCompleteTextView.hideClearButton();
-        autoCompleteTextView.setHint(R.string.select_one);
+        autoCompleteTextView.showDropDown();
+
+
+        InputMethodManager inputManager =
+                (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        
+        inputManager.showSoftInputFromInputMethod(this.getWindowToken(), 0);
 
         autoCompleteTextView.setOnFocusChangeListener(new OnFocusChangeListener() {
             @Override

@@ -29,6 +29,7 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TableLayout;
@@ -105,6 +106,7 @@ public class StringWidget extends QuestionWidget {
             mAnswer.setBackgroundDrawable(null);
             mAnswer.setFocusable(false);
             mAnswer.setClickable(false);
+            mAnswer.setVisibility(View.GONE);
         }
 
         addView(mAnswer);

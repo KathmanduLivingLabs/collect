@@ -160,7 +160,7 @@ public class ExStringWidget extends QuestionWidget implements IBinaryWidget {
                     ExternalAppsUtils.populateParameters(i, exParams, mPrompt.getIndex().getReference());
 
                     Collect.getInstance().getFormController().setIndexWaitingForData(mPrompt.getIndex());
-                	fireActivity(i);
+                    fireActivity(i);
                 } catch (ExternalParamsException e) {
                     Log.e(t, e.getMessage(), e);
                     onException(e.getMessage());
@@ -172,7 +172,7 @@ public class ExStringWidget extends QuestionWidget implements IBinaryWidget {
 
             private void onException(String toastText) {
                 mHasExApp = false;
-                if ( !mPrompt.isReadOnly() ) {
+                if (!mPrompt.isReadOnly()) {
                     mAnswer.setBackgroundDrawable(mTextBackground);
                     mAnswer.setFocusable(true);
                     mAnswer.setFocusableInTouchMode(true);
@@ -187,7 +187,7 @@ public class ExStringWidget extends QuestionWidget implements IBinaryWidget {
                 ExStringWidget.this.mAnswer.requestFocus();
             }
         });
-
+        Log.i("This is", "note widgegt from ex");
         // finish complex layout
         addView(mLaunchIntentButton);
         addView(mAnswer);

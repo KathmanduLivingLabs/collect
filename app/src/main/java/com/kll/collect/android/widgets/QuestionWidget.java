@@ -30,7 +30,9 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.Image;
 import android.opengl.Visibility;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -63,6 +65,7 @@ public abstract class QuestionWidget extends LinearLayout {
     private LinearLayout.LayoutParams mLayout;
     private LinearLayout.LayoutParams mToggleLayout;
     private LinearLayout.LayoutParams mLinearLayout;
+    private LinearLayout.LayoutParams mLinearLayoutAsteriks;
     private RelativeLayout.LayoutParams mRelativeLayout;
     protected FormEntryPrompt mPrompt;
 
@@ -74,14 +77,20 @@ public abstract class QuestionWidget extends LinearLayout {
     private TextView mHelpText;
     private Button mHelpButton;
     private Button mCloseButton;
-
+    private ImageView mRequired;
 
     public QuestionWidget(Context context, FormEntryPrompt p) {
         super(context);
 
         mQuestionFontsize = Collect.getQuestionFontsize();
         mAnswerFontsize = mQuestionFontsize + 2;
-
+        mRequired = new ImageView(getContext());
+        mRequired.setBackgroundResource(android.R.drawable.star_off);
+        if(p.isRequired()){
+            mRequired.setVisibility(View.VISIBLE);
+        }else{
+            mRequired.setVisibility(View.GONE);
+        }
         mPrompt = p;
 
         setOrientation(LinearLayout.VERTICAL);
@@ -101,7 +110,12 @@ public abstract class QuestionWidget extends LinearLayout {
         mLinearLayout =
                 new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
                         LinearLayout.LayoutParams.WRAP_CONTENT);
+        //mLinearLayoutAsteriks = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
+        // LinearLayout.LayoutParams.WRAP_CONTENT);
+       // mLinearLayoutAsteriks.gravity = Gravity.RIGHT;
+//        mRequired.setLayoutParams(mLinearLayoutAsteriks);
         mLayout.setMargins(10, 0, 10, 0);
+        //addView(mRequired);
         addQuestionText(p);
        // addHelpText(p);
 
@@ -192,13 +206,21 @@ public abstract class QuestionWidget extends LinearLayout {
         String bigImageURI = p.getSpecialFormQuestionText("big-image");
 
         String promptText = p.getLongText();
+
+        mQuestionText = new TextView(getContext());
+        Boolean readOnly = p.isReadOnly();
+        Log.i("need backgroung", Boolean.toString(!readOnly));
+        if(!readOnly) {
+            mQuestionText.setBackgroundColor(0xFFC0C0C0);
+        }
+
         if (s != null && !s.equals("")) {
             LinearLayout ll1 = new LinearLayout(getContext());
             LinearLayout ll2 = new LinearLayout(getContext());
             RelativeLayout realativeLayout = new RelativeLayout(getContext());
 
-            mQuestionText = new TextView(getContext());
-            mQuestionText.setBackgroundColor(0xFFC0C0C0);
+
+
             mQuestionText.setText(promptText == null ? "" : promptText);
             mQuestionText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, mQuestionFontsize);
             mQuestionText.setTypeface(null, Typeface.BOLD);
@@ -226,7 +248,7 @@ public abstract class QuestionWidget extends LinearLayout {
             ll2.setLayoutParams(mLinearLayout);
             ll1.addView(mediaLayout, mLayout);
             ll1.setGravity(Gravity.LEFT);
-            ll2.setPadding(0,4,4,0);
+            ll2.setPadding(0,0,4,0);
 
             mHelpButton.setText(null);
             mHelpButton.setBackgroundResource(android.R.drawable.ic_menu_help);
@@ -262,8 +284,9 @@ public abstract class QuestionWidget extends LinearLayout {
         }
         else {
             // Add the text view. Textview always exists, regardless of whether there's text.
-            mQuestionText = new TextView(getContext());
-            mQuestionText.setBackgroundColor(0xFFC0C0C0);
+
+
+
             mQuestionText.setText(promptText == null ? "" : promptText);
             mQuestionText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, mQuestionFontsize);
             mQuestionText.setTypeface(null, Typeface.BOLD);
@@ -308,7 +331,7 @@ public abstract class QuestionWidget extends LinearLayout {
             mHelpButton = new Button(getContext());
             mCloseButton = new Button(getContext());
              mHelpText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, mQuestionFontsize - 3);
-            mHelpText.setPadding(0, -5, 0, 7);
+            mHelpText.setPadding(0, 5, 0, 7);
             // wrap to the widget of view
             mHelpText.setHorizontallyScrolling(false);
             mHelpText.setText(s);
