@@ -24,6 +24,7 @@ the License.
 			android:layout_height="wrap_content"
 			android:text="@string/form_scan_starting"
 			android:textSize="14sp"
+			android:visibility="gone"
 			android:paddingLeft="8dip"
 			android:paddingRight="8dip"
 			android:paddingBottom="4dip"

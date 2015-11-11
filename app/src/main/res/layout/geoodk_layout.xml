@@ -19,7 +19,7 @@
         android:paddingTop="10dp"
         android:text="@string/geoodk_mainTitle"
         android:textSize="18sp"
-        android:textStyle="italic"/>
+        android:textStyle="bold"/>
 
 
 	<ScrollView
