@@ -185,9 +185,11 @@ public class ListWidget extends QuestionWidget implements OnCheckedChangeListene
                 // build text label. Don't assign the text to the built in label to he
                 // button because it aligns horizontally, and we want the label on top
                 TextView label = new TextView(getContext());
+
                 label.setText(prompt.getSelectChoiceText(mItems.get(i)));
-                label.setTextSize(TypedValue.COMPLEX_UNIT_DIP, mAnswerFontsize);
-                label.setGravity(Gravity.CENTER_HORIZONTAL);
+                label.setTextSize(TypedValue.COMPLEX_UNIT_DIP, mAnswerFontsize-10);
+                //label.setTextSize(TypedValue.COMPLEX_UNIT_DIP,1);
+                label.setGravity(Gravity.CENTER);
                 if (!displayLabel) {
                     label.setVisibility(View.GONE);
                 }
@@ -222,11 +224,11 @@ public class ListWidget extends QuestionWidget implements OnCheckedChangeListene
                 	buttonParams.addRule(RelativeLayout.BELOW, labelId );
                 }
                 answer.addView(r, buttonParams);
-                answer.setPadding(4, 0, 4, 0);
+                answer.setPadding(1, 0, 1, 0);
 
                 // Each button gets equal weight
                 LinearLayout.LayoutParams answerParams =
-                    new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT,
+                    new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT ,
                             LayoutParams.WRAP_CONTENT);
                 answerParams.weight = 1;
 
@@ -336,8 +338,8 @@ public class ListWidget extends QuestionWidget implements OnCheckedChangeListene
 
         // Put the question text on the left half of the screen
         LinearLayout.LayoutParams labelParams =
-            new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
-        labelParams.weight = 1;
+            new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+
 
         questionLayout = new LinearLayout(getContext());
         questionLayout.setOrientation(LinearLayout.HORIZONTAL);

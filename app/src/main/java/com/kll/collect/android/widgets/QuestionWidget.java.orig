@@ -248,7 +248,11 @@ public abstract class QuestionWidget extends LinearLayout {
             ll2.setLayoutParams(mLinearLayout);
             ll1.addView(mediaLayout, mLayout);
             ll1.setGravity(Gravity.LEFT);
+<<<<<<< HEAD
+            ll2.setPadding(0,8,12,0);
+=======
             ll2.setPadding(0,0,4,0);
+>>>>>>> origin/noteMargin
 
             mHelpButton.setText(null);
             mHelpButton.setBackgroundResource(R.drawable.questionmark);
@@ -330,14 +334,19 @@ public abstract class QuestionWidget extends LinearLayout {
 
             mHelpButton = new Button(getContext());
             mCloseButton = new Button(getContext());
+<<<<<<< HEAD
+            mHelpText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, mQuestionFontsize - 3);
+            mHelpText.setPadding(5, -5, 4, 7);
+=======
              mHelpText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, mQuestionFontsize - 3);
             mHelpText.setPadding(0, 5, 0, 7);
+>>>>>>> origin/noteMargin
             // wrap to the widget of view
             mHelpText.setHorizontallyScrolling(false);
             mHelpText.setText(s);
             mHelpText.setTypeface(null, Typeface.ITALIC);
             ll2.setLayoutParams(mLinearLayout);
-             ll1.addView(mHelpText, mLayout);
+            ll1.addView(mHelpText, mLayout);
             ll1.setGravity(Gravity.LEFT);
             mHelpButton.setText(null);
             mHelpButton.setBackgroundResource(android.R.drawable.ic_menu_help);
@@ -354,7 +363,7 @@ public abstract class QuestionWidget extends LinearLayout {
             realativeLayout.setLayoutParams(mLinearLayout);
             mHelpText.setVisibility(View.GONE);
             mRelativeLayout.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-           realativeLayout.addView(ll1);
+            realativeLayout.addView(ll1);
             realativeLayout.addView(ll2,mRelativeLayout);
             addView(realativeLayout, mLayout);
             mHelpButton.setOnClickListener(new OnClickListener() {
