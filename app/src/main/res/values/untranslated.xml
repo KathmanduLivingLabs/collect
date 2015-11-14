@@ -13,7 +13,7 @@
 	<string translatable="false" name="protocol_odk_default">odk_default</string>
 	<string translatable="false" name="protocol_google">google</string>
 	<string translatable="false" name="protocol_other"></string>
-	<string translatable="false" name="default_server_url">http://ona.io/klltesting</string>
+	<string translatable="false" name="default_server_url">https://odk.ona.io/klltesting</string>
 	<string translatable="false" name="default_odk_formlist">/formList</string>
 	<string translatable="false" name="default_odk_submission">/submission</string>
 	<string translatable="false" name="stat_title">Daily Stat and Summary of Data Collection</string>
