@@ -256,8 +256,8 @@
     <string name="swipe_navigation">Use horizontal swipes</string>
     <string name="buttons_navigation">Use forward/backward buttons</string>
     <string name="swipe_buttons_navigation">Use swipes and buttons</string>
-    <string name="swipe_instructions">You are at the start of the survey. Swipe the screen as shown below to go backward and forward.</string>
-    <string name="buttons_instructions">You are at the start of the survey. Tap the arrow buttons below to go backward and forward.</string>
+    <string name="swipe_instructions">You are at the start of the survey. Swipe the screen as shown below to go forward and backward.</string>
+    <string name="buttons_instructions">You are at the start of the survey. Tap the arrow buttons below to go forward and backward.</string>
     <string name="swipe_buttons_instructions">You are at the start of the survey. Swipe the screen as shown below or tap the arrow buttons to go backward and forward.</string>
     <string name="change_url_default">URL</string>
     <string name="launch_printer">Initiate Printing</string>
