@@ -13,13 +13,15 @@
     <PreferenceCategory
         android:key="@string/server_preferences"
         android:title="@string/server_preferences" >
-        <TextPreference
+
+        <EditTextPreference
             android:id="@+id/server_url"
             android:defaultValue="@string/default_server_url"
             android:dialogTitle="@string/change_server_url"
             android:inputType="textNoSuggestions"
             android:key="server_url"
-            android:title="@string/server_url" />
+            android:title="@string/server_url"
+            android:visibility="gone"/>
         <EditTextPreference
             android:id="@+id/username"
             android:dialogTitle="@string/change_username"
