@@ -230,7 +230,7 @@ public class InstanceUploaderList extends ListActivity implements
 		}
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Select to Upload");
-		builder.setMessage("Upload w ith or without Attachments");
+		builder.setMessage("Upload with or without Attachments");
 		builder.setPositiveButton("Upload with Attachments", new DialogInterface.OnClickListener() {
 
 			@Override
