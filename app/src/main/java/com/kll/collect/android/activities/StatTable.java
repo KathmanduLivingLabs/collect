@@ -151,6 +151,7 @@ public class StatTable extends Activity implements DiskSyncListener{
                 formID = Character.toString(temp);
             }
             Log.i("Message", smsBody);
+
             smsManager.sendTextMessage(sms_receiver, null, smsBody, null, null);
             Toast.makeText(getApplicationContext(), "Your sms has successfully sent!",Toast.LENGTH_LONG).show();
 

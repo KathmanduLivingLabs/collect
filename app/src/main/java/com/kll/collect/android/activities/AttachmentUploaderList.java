@@ -73,8 +73,8 @@ public class AttachmentUploaderList extends ListActivity implements
 
     public Cursor getUnsentCursor() {
         // get all complete or failed submission instances
-        String selection = InstanceColumns.STATUS + "=? or " + InstanceColumns.STATUS + "=?";
-        String selectionArgs[] = { InstanceProviderAPI.STATUS_ATTACHMENT_NOT_SENT,InstanceProviderAPI.STATUS_ATTACHMENT_SENDING_FAILED};
+        String selection = InstanceColumns.STATUS + "=?";
+        String selectionArgs[] = { InstanceProviderAPI.STATUS_ATTACHMENT_NOT_SENT};
         String sortOrder = InstanceColumns.DISPLAY_NAME + " ASC";
         Cursor c = managedQuery(InstanceColumns.CONTENT_URI, null, selection,
                 selectionArgs, sortOrder);
@@ -85,15 +85,10 @@ public class AttachmentUploaderList extends ListActivity implements
         // get all complete or failed submission instances
         String selection = InstanceColumns.STATUS + "=? or "
                 + InstanceColumns.STATUS + "=? or " + InstanceColumns.STATUS
-                +InstanceColumns.STATUS + "=? or "
-                + InstanceColumns.STATUS + "=? or " + InstanceColumns.STATUS
                 + "=?";
         String selectionArgs[] = { InstanceProviderAPI.STATUS_COMPLETE,
                 InstanceProviderAPI.STATUS_SUBMISSION_FAILED,
-                InstanceProviderAPI.STATUS_SUBMITTED,
-                InstanceProviderAPI.STATUS_ATTACHMENT_SENDING_FAILED,
-                InstanceProviderAPI.STATUS_ATTACHMENT_NOT_SENT,
-                 };
+                InstanceProviderAPI.STATUS_SUBMITTED };
         String sortOrder = InstanceColumns.DISPLAY_NAME + " ASC";
         Cursor c = managedQuery(InstanceColumns.CONTENT_URI, null, selection,
                 selectionArgs, sortOrder);
