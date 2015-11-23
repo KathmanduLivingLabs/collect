@@ -34,6 +34,7 @@ public final class InstanceProviderAPI {
     public static final String STATUS_SUBMITTED = "submitted";
     public static final String STATUS_SUBMISSION_FAILED = "submissionFailed";
     public static final String STATUS_ATTACHMENT_NOT_SENT  = "attachmentNotSent";
+    public static final String STATUS_ATTACHMENT_SENDING_FAILED = "attachmentSendingFailed";
 
     
     /**

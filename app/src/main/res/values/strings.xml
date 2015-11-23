@@ -342,5 +342,7 @@
     <string name="img_compresion">IMAGE COMPRESSION</string>
     <string name="enable_img_compression_summary">Compress image size to reduce upload time and storage</string>
     <string name="enable_img_compression">Enable Image Compression</string>
+    <string name="attachment_not_sent_on_date_at_time">Attachment Not Sent</string>
+    <string name="attachment_sending_failed_on_date_at_time">Attachment Sending Failed</string>
 
 </resources>

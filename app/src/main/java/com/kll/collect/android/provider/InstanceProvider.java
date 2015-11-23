@@ -227,7 +227,12 @@ public class InstanceProvider extends ContentProvider {
         	return new SimpleDateFormat(getContext().getString(R.string.sent_on_date_at_time), Locale.getDefault()).format(date);
         } else if (InstanceProviderAPI.STATUS_SUBMISSION_FAILED.equalsIgnoreCase(state)) {
         	return new SimpleDateFormat(getContext().getString(R.string.sending_failed_on_date_at_time), Locale.getDefault()).format(date);
-        } else {
+        }else if (InstanceProviderAPI.STATUS_ATTACHMENT_NOT_SENT.equalsIgnoreCase(state)) {
+            return new SimpleDateFormat(getContext().getString(R.string.attachment_not_sent_on_date_at_time), Locale.getDefault()).format(date);
+        } else if (InstanceProviderAPI.STATUS_ATTACHMENT_SENDING_FAILED.equalsIgnoreCase(state)) {
+            return new SimpleDateFormat(getContext().getString(R.string.attachment_sending_failed_on_date_at_time), Locale.getDefault()).format(date);
+        }
+        else {
         	return new SimpleDateFormat(getContext().getString(R.string.added_on_date_at_time), Locale.getDefault()).format(date);
         }
     }

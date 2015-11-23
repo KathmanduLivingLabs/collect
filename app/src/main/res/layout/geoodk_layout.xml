@@ -64,7 +64,7 @@
 				<LinearLayout android:gravity="center_vertical" android:id="@+id/row4" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginBottom="30.0dip">
 					<RelativeLayout android:gravity="center_horizontal" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_weight="50.0">
 						<ImageButton android:gravity="center_horizontal" android:id="@+id/geoodk_stat_butt" android:background="@drawable/state_color" android:layout_width="100.0dip" android:layout_height="100.0dip" android:src="@drawable/ic_stat" />
-						<TextView android:gravity="center_horizontal" android:clickable="false" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="30.0dip" android:text="Stat" android:layout_below="@+id/geoodk_stat_butt" />
+						<TextView android:gravity="center_horizontal" android:clickable="false" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="30.0dip" android:text="Statistics" android:layout_below="@+id/geoodk_stat_butt" />
 					</RelativeLayout>
 					<RelativeLayout android:gravity="center" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_weight="50.0">
 						<ImageButton android:gravity="center_horizontal" android:id="@+id/geoodk_settings_butt" android:background="@drawable/state_color" android:layout_width="100.0dip" android:layout_height="100.0dip" android:src="@drawable/settings_gear" />

@@ -2,6 +2,7 @@ package com.kll.collect.android.activities;
 
 import android.app.Activity;
 
+import android.app.ListActivity;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -16,17 +17,20 @@ import android.telephony.SmsManager;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
 import com.kll.collect.android.R;
 import com.kll.collect.android.adapters.ExpandableListAdapter;
+import com.kll.collect.android.listeners.DiskSyncListener;
 import com.kll.collect.android.preferences.PreferencesActivity;
 import com.kll.collect.android.provider.FormsProviderAPI;
 
 
 import com.kll.collect.android.provider.InstanceProviderAPI;
 import com.kll.collect.android.provider.InstanceStatProvider;
+import com.kll.collect.android.tasks.DiskSyncTask;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -40,7 +44,7 @@ import java.util.List;
 /**
  * Created by pujan on 8/23/15.
  */
-public class StatTable extends Activity{
+public class StatTable extends Activity implements DiskSyncListener{
 
     private String DATEALL;
     private String DATELASTMONTH;
@@ -58,6 +62,10 @@ public class StatTable extends Activity{
     private Button send_email;
     private ArrayList<InstanceStatProvider> instanceStatProviders;
 
+    private static final String syncMsgKey = "syncmsgkey";
+
+    private DiskSyncTask mDiskSyncTask;
+
     public StatTable()
     {
         DATETODAY = "Today";
@@ -66,7 +74,7 @@ public class StatTable extends Activity{
         DATELASTMONTH = "Last Month";
         DATEALL = "ALL";
     }
-
+    @Override
     public void onCreate(Bundle bundle)
     {
         super.onCreate(bundle);
@@ -102,6 +110,25 @@ public class StatTable extends Activity{
             }
         });
 
+        mDiskSyncTask = (DiskSyncTask) getLastNonConfigurationInstance();
+        if (mDiskSyncTask == null) {
+            mDiskSyncTask = new DiskSyncTask();
+            mDiskSyncTask.setDiskSyncListener(this);
+            mDiskSyncTask.execute((Void[]) null);
+        }
+    }
+    @Override
+    public Object onRetainNonConfigurationInstance() {
+        // pass the thread on restart
+        return mDiskSyncTask;
+    }
+
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        TextView tv = (TextView) findViewById(R.id.stat_status);
+        outState.putString(syncMsgKey, tv.getText().toString());
     }
 
     private void smsStat(ArrayList<InstanceStatProvider> instanceStatProviders) {
@@ -238,18 +265,18 @@ public class StatTable extends Activity{
     }
 
     private Cursor getNo_attachmentCursor(String formName, String finaldate, String curDate) {
-        String selection =  "(" + InstanceProviderAPI.InstanceColumns.STATUS + "=? ) and " + InstanceProviderAPI.InstanceColumns.DISPLAY_NAME + "=? and  ("+ InstanceProviderAPI.InstanceColumns.LAST_STATUS_CHANGE_DATE + " BETWEEN '"+finaldate +"' and '"+curDate+"')";
+        String selection =  "(" + InstanceProviderAPI.InstanceColumns.STATUS + "=? or " +  InstanceProviderAPI.InstanceColumns.STATUS + "=?) and " + InstanceProviderAPI.InstanceColumns.DISPLAY_NAME + "=? and  ("+ InstanceProviderAPI.InstanceColumns.LAST_STATUS_CHANGE_DATE + " BETWEEN '"+finaldate +"' and '"+curDate+"')";
         Log.i("Selectiion",selection);
-        String[] selectionArgs = {InstanceProviderAPI.STATUS_ATTACHMENT_NOT_SENT ,formName};
+        String[] selectionArgs = {InstanceProviderAPI.STATUS_ATTACHMENT_NOT_SENT ,InstanceProviderAPI.STATUS_ATTACHMENT_SENDING_FAILED,formName};
         Cursor c = managedQuery(InstanceProviderAPI.InstanceColumns.CONTENT_URI, null, selection, selectionArgs,null);
         return c;
     }
 
     private Cursor getSentCursor(String formName, String finaldate, String curDate) {
 
-        String selection =  "(" + InstanceProviderAPI.InstanceColumns.STATUS + "=? or "+ InstanceProviderAPI.InstanceColumns.STATUS + "=? ) and " + InstanceProviderAPI.InstanceColumns.DISPLAY_NAME + "=? and  ("+ InstanceProviderAPI.InstanceColumns.LAST_STATUS_CHANGE_DATE + " BETWEEN '"+finaldate +"' and '"+curDate+"')";
+        String selection =  "(" + InstanceProviderAPI.InstanceColumns.STATUS + "=? or "+ InstanceProviderAPI.InstanceColumns.STATUS + "=? or "+ InstanceProviderAPI.InstanceColumns.STATUS + "=? ) and " + InstanceProviderAPI.InstanceColumns.DISPLAY_NAME + "=? and  ("+ InstanceProviderAPI.InstanceColumns.LAST_STATUS_CHANGE_DATE + " BETWEEN '"+finaldate +"' and '"+curDate+"')";
         Log.i("Selectiion",selection);
-        String[] selectionArgs = {InstanceProviderAPI.STATUS_SUBMITTED, InstanceProviderAPI.STATUS_ATTACHMENT_NOT_SENT ,formName};
+        String[] selectionArgs = {InstanceProviderAPI.STATUS_SUBMITTED, InstanceProviderAPI.STATUS_ATTACHMENT_NOT_SENT,InstanceProviderAPI.STATUS_ATTACHMENT_SENDING_FAILED ,formName};
         Cursor c = managedQuery(InstanceProviderAPI.InstanceColumns.CONTENT_URI, null, selection, selectionArgs,null);
             return c;
 
@@ -259,12 +286,18 @@ public class StatTable extends Activity{
     private Cursor getCompletedCursor(String formName, String finaldate, String curDate) {
 
 
-        String selection =  "(" + InstanceProviderAPI.InstanceColumns.STATUS + "=? or " + InstanceProviderAPI.InstanceColumns.STATUS + "=? or " + InstanceProviderAPI.InstanceColumns.STATUS + "=? or "+ InstanceProviderAPI.InstanceColumns.STATUS + "=? ) and " + InstanceProviderAPI.InstanceColumns.DISPLAY_NAME + "=? and  ("+ InstanceProviderAPI.InstanceColumns.LAST_STATUS_CHANGE_DATE + " BETWEEN '"+finaldate +"' and '"+curDate+"')";
+        String selection =  "(" + InstanceProviderAPI.InstanceColumns.STATUS + "=? or " + InstanceProviderAPI.InstanceColumns.STATUS + "=? or " + InstanceProviderAPI.InstanceColumns.STATUS + "=? or "+ InstanceProviderAPI.InstanceColumns.STATUS +"=? or "+ InstanceProviderAPI.InstanceColumns.STATUS + "=? ) and " + InstanceProviderAPI.InstanceColumns.DISPLAY_NAME + "=? and  ("+ InstanceProviderAPI.InstanceColumns.LAST_STATUS_CHANGE_DATE + " BETWEEN '"+finaldate +"' and '"+curDate+"')";
         Log.i("Selectiion",selection);
-        String[] selectionArgs = {InstanceProviderAPI.STATUS_COMPLETE,InstanceProviderAPI.STATUS_SUBMITTED, InstanceProviderAPI.STATUS_ATTACHMENT_NOT_SENT , InstanceProviderAPI.STATUS_SUBMISSION_FAILED,formName};
+        String[] selectionArgs = {InstanceProviderAPI.STATUS_COMPLETE,InstanceProviderAPI.STATUS_SUBMITTED, InstanceProviderAPI.STATUS_ATTACHMENT_NOT_SENT , InstanceProviderAPI.STATUS_SUBMISSION_FAILED,InstanceProviderAPI.STATUS_ATTACHMENT_SENDING_FAILED,formName};
         Cursor c = managedQuery(InstanceProviderAPI.InstanceColumns.CONTENT_URI, null, selection, selectionArgs,null);
             return c;
 
     }
 
+    @Override
+    public void SyncComplete(String result) {
+
+        TextView tv = (TextView) findViewById(R.id.stat_status);
+        tv.setText(result);
+    }
 }

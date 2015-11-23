@@ -159,7 +159,7 @@ public class InstanceUploaderNoAttachmentTask extends AsyncTask<Long, Integer, I
                                                 + "Unexpected redirection attempt to a different host: "
                                                 + uNew.toString());
                                 cv.put(InstanceColumns.STATUS,
-                                        InstanceProviderAPI.STATUS_SUBMISSION_FAILED);
+                                        InstanceProviderAPI.STATUS_ATTACHMENT_SENDING_FAILED);
                                 Collect.getInstance().getContentResolver()
                                         .update(toUpdate, cv, null, null);
                                 return true;
@@ -168,7 +168,7 @@ public class InstanceUploaderNoAttachmentTask extends AsyncTask<Long, Integer, I
                             e.printStackTrace();
                             outcome.mResults.put(id, fail + urlString + " " + e.toString());
                             cv.put(InstanceColumns.STATUS,
-                                    InstanceProviderAPI.STATUS_SUBMISSION_FAILED);
+                                    InstanceProviderAPI.STATUS_ATTACHMENT_SENDING_FAILED);
                             Collect.getInstance().getContentResolver()
                                     .update(toUpdate, cv, null, null);
                             return true;
@@ -185,7 +185,7 @@ public class InstanceUploaderNoAttachmentTask extends AsyncTask<Long, Integer, I
                                 fail
                                         + "Invalid status code on Head request.  If you have a web proxy, you may need to login to your network. ");
                         cv.put(InstanceColumns.STATUS,
-                                InstanceProviderAPI.STATUS_SUBMISSION_FAILED);
+                                InstanceProviderAPI.STATUS_ATTACHMENT_SENDING_FAILED);
                         Collect.getInstance().getContentResolver()
                                 .update(toUpdate, cv, null, null);
                         return true;
@@ -196,7 +196,7 @@ public class InstanceUploaderNoAttachmentTask extends AsyncTask<Long, Integer, I
                 Log.e(t, e.toString());
                 WebUtils.clearHttpConnectionManager();
                 outcome.mResults.put(id, fail + "Client Protocol Exception");
-                cv.put(InstanceColumns.STATUS, InstanceProviderAPI.STATUS_SUBMISSION_FAILED);
+                cv.put(InstanceColumns.STATUS, InstanceProviderAPI.STATUS_ATTACHMENT_SENDING_FAILED);
                 Collect.getInstance().getContentResolver().update(toUpdate, cv, null, null);
                 return true;
             } catch (ConnectTimeoutException e) {
@@ -204,7 +204,7 @@ public class InstanceUploaderNoAttachmentTask extends AsyncTask<Long, Integer, I
                 Log.e(t, e.toString());
                 WebUtils.clearHttpConnectionManager();
                 outcome.mResults.put(id, fail + "Connection Timeout");
-                cv.put(InstanceColumns.STATUS, InstanceProviderAPI.STATUS_SUBMISSION_FAILED);
+                cv.put(InstanceColumns.STATUS, InstanceProviderAPI.STATUS_ATTACHMENT_SENDING_FAILED);
                 Collect.getInstance().getContentResolver().update(toUpdate, cv, null, null);
                 return true;
             } catch (UnknownHostException e) {
@@ -212,15 +212,15 @@ public class InstanceUploaderNoAttachmentTask extends AsyncTask<Long, Integer, I
                 Log.e(t, e.toString());
                 WebUtils.clearHttpConnectionManager();
                 outcome.mResults.put(id, fail + e.toString() + " :: Network Connection Failed");
-                cv.put(InstanceColumns.STATUS, InstanceProviderAPI.STATUS_SUBMISSION_FAILED);
+                cv.put(InstanceColumns.STATUS, InstanceProviderAPI.STATUS_ATTACHMENT_SENDING_FAILED);
                 Collect.getInstance().getContentResolver().update(toUpdate, cv, null, null);
                 return true;
             } catch (SocketTimeoutException e) {
                 e.printStackTrace();
                 Log.e(t, e.toString());
                 WebUtils.clearHttpConnectionManager();
-                outcome.mResults.put(id, fail + "Connection Timeout");
-                cv.put(InstanceColumns.STATUS, InstanceProviderAPI.STATUS_SUBMISSION_FAILED);
+                outcome.mResults.put(id, fail + "Connection TimeoutS");
+                cv.put(InstanceColumns.STATUS, InstanceProviderAPI.STATUS_ATTACHMENT_SENDING_FAILED);
                 Collect.getInstance().getContentResolver().update(toUpdate, cv, null, null);
                 return true;
             } catch (HttpHostConnectException e) {
@@ -228,7 +228,7 @@ public class InstanceUploaderNoAttachmentTask extends AsyncTask<Long, Integer, I
                 Log.e(t, e.toString());
                 WebUtils.clearHttpConnectionManager();
                 outcome.mResults.put(id, fail + "Network Connection Refused");
-                cv.put(InstanceColumns.STATUS, InstanceProviderAPI.STATUS_SUBMISSION_FAILED);
+                cv.put(InstanceColumns.STATUS, InstanceProviderAPI.STATUS_ATTACHMENT_SENDING_FAILED);
                 Collect.getInstance().getContentResolver().update(toUpdate, cv, null, null);
                 return true;
             } catch (Exception e) {
@@ -238,7 +238,7 @@ public class InstanceUploaderNoAttachmentTask extends AsyncTask<Long, Integer, I
                 String msg = e.getMessage();
                 if ( msg == null ) msg = e.toString();
                 outcome.mResults.put(id, fail + "Generic Exception: " + msg);
-                cv.put(InstanceColumns.STATUS, InstanceProviderAPI.STATUS_SUBMISSION_FAILED);
+                cv.put(InstanceColumns.STATUS, InstanceProviderAPI.STATUS_ATTACHMENT_SENDING_FAILED);
                 Collect.getInstance().getContentResolver().update(toUpdate, cv, null, null);
                 return true;
             }
@@ -274,7 +274,7 @@ public class InstanceUploaderNoAttachmentTask extends AsyncTask<Long, Integer, I
 
         if (!instanceFile.exists() && !submissionFile.exists()) {
             outcome.mResults.put(id, fail + "instance XML file does not exist!");
-            cv.put(InstanceColumns.STATUS, InstanceProviderAPI.STATUS_SUBMISSION_FAILED);
+            cv.put(InstanceColumns.STATUS, InstanceProviderAPI.STATUS_ATTACHMENT_SENDING_FAILED);
             Collect.getInstance().getContentResolver().update(toUpdate, cv, null, null);
             return true;
         }
@@ -387,7 +387,7 @@ public class InstanceUploaderNoAttachmentTask extends AsyncTask<Long, Integer, I
                                 + " (" + responseCode + ") at " + urlString);
                     }
                     cv.put(InstanceColumns.STATUS,
-                            InstanceProviderAPI.STATUS_SUBMISSION_FAILED);
+                            InstanceProviderAPI.STATUS_ATTACHMENT_SENDING_FAILED);
                     Collect.getInstance().getContentResolver()
                             .update(toUpdate, cv, null, null);
                     return true;
@@ -399,7 +399,7 @@ public class InstanceUploaderNoAttachmentTask extends AsyncTask<Long, Integer, I
                 String msg = e.getMessage();
                 if ( msg == null ) msg = e.toString();
                 outcome.mResults.put(id, fail + "Generic Exception. " + msg);
-                cv.put(InstanceColumns.STATUS, InstanceProviderAPI.STATUS_SUBMISSION_FAILED);
+                cv.put(InstanceColumns.STATUS, InstanceProviderAPI.STATUS_ATTACHMENT_SENDING_FAILED);
                 Collect.getInstance().getContentResolver().update(toUpdate, cv, null, null);
                 return true;
             }
