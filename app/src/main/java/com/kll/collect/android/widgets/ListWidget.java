@@ -225,12 +225,14 @@ public class ListWidget extends QuestionWidget implements OnCheckedChangeListene
                 }
                 answer.addView(r, buttonParams);
                 answer.setPadding(1, 0, 1, 0);
-
+                r.setGravity(Gravity.RIGHT);
+                buttonParams.setMargins(10,10,10,10);
                 // Each button gets equal weight
                 LinearLayout.LayoutParams answerParams =
                     new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT ,
                             LayoutParams.WRAP_CONTENT);
                 answerParams.weight = 1;
+                answer.setGravity(Gravity.RIGHT);
 
                 buttonLayout.addView(answer, answerParams);
 
@@ -240,14 +242,16 @@ public class ListWidget extends QuestionWidget implements OnCheckedChangeListene
         // Align the buttons so that they appear horizonally and are right justified
         // buttonLayout.setGravity(Gravity.RIGHT);
         buttonLayout.setOrientation(LinearLayout.HORIZONTAL);
+
         // LinearLayout.LayoutParams params = new
         // LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
         // buttonLayout.setLayoutParams(params);
 
         // The buttons take up the right half of the screen
         LinearLayout.LayoutParams buttonParams =
-            new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+            new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
         buttonParams.weight = 1;
+
 
         // questionLayout is created and populated with the question text in the
         // super() constructor via a call to addQuestionText

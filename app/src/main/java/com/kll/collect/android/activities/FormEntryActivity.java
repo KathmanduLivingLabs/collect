@@ -1519,7 +1519,7 @@ public class FormEntryActivity extends Activity implements AnimationListener,
             String userinput = getValueFromXML(xmlToParse,fields[i]);
             Log.i("PARSINGKEY",fields[i]);
             if (userinput != null) {
-                saveName = saveName + fields[i] + ": " + userinput + " ";
+                saveName = saveName + userinput + " ";
             }
 
         }

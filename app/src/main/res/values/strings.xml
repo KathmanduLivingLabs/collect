@@ -104,7 +104,7 @@
     <string name="main_menu">Main Menu</string>
     <string name="main_menu_details">Data collection made easier&#8230;</string>
     <string name="manage_files">Delete Saved Form</string>
-    <string name="mark_finished">Mark form as finalized</string>
+    <string name="mark_finished">डाटा अप्लोडको लागि तयार । </string>
     <string name="noselect_error">Sorry, you have not selected any forms!</string>
     <string name="no_connection">No network connection available</string>
     <string name="no_items_display">Nothing available to display.</string>
@@ -120,7 +120,7 @@
     <string name="please_wait">Please wait a few moments.</string>
     <string name="please_wait_long">Please wait. This could take a few minutes.</string>
     <string name="quit_application">Exit %s</string>
-    <string name="quit_entry">Save Form and Exit</string>
+    <string name="quit_entry">Save and Exit</string>
     <string name="refresh">Refresh</string>
     <string name="replace_barcode">Replace Barcode</string>
     <string name="replace_location">लोकेशन परिवर्तन गर्नुहोस</string>
@@ -129,7 +129,7 @@
     <string name="review_data_button">Edit Saved Form (%s)</string>
     <string name="saved_data">Incomplete (%s)</string>
     <string name="save_all_answers">Save Form</string>
-    <string name="save_enter_data_description">You are at the end of the survey.</string>
+    <string name="save_enter_data_description">बधाई छ , तपाईंले यो घरको सेर्बे पुरा गर्नुभयो । </string>
     <string name="saving_form">Saving Form</string>
     <string name="sending_items">Sending %1$s of %2$s form(s)</string>
     <string name="send_data">Send Finalized Form</string>
@@ -258,7 +258,7 @@
     <string name="swipe_navigation">Use horizontal swipes</string>
     <string name="buttons_navigation">Use forward/backward buttons</string>
     <string name="swipe_buttons_navigation">Use swipes and buttons</string>
-    <string name="swipe_instructions">You are at the start of the survey. Swipe the screen as shown below to go forward and backward.</string>
+    <string name="swipe_instructions">तपाईं सर्वेक्षणको सुरुमा हुनुहुन्छ । अगाडि र पछाडि जान तल देखाइएको रूपमा स्क्रिन स्वाइप गर्नुहोस् । </string>
     <string name="buttons_instructions">You are at the start of the survey. Tap the arrow buttons below to go forward and backward.</string>
     <string name="swipe_buttons_instructions">You are at the start of the survey. Swipe the screen as shown below or tap the arrow buttons to go backward and forward.</string>
     <string name="change_url_default">URL</string>
