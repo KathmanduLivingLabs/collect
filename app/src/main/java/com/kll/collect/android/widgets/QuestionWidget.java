@@ -114,7 +114,7 @@ public abstract class QuestionWidget extends LinearLayout {
         // LinearLayout.LayoutParams.WRAP_CONTENT);
        // mLinearLayoutAsteriks.gravity = Gravity.RIGHT;
 //        mRequired.setLayoutParams(mLinearLayoutAsteriks);
-        mLayout.setMargins(10, 0, 10, 0);
+        mLayout.setMargins(10,20,10,10);
         //addView(mRequired);
         addQuestionText(p);
        // addHelpText(p);
