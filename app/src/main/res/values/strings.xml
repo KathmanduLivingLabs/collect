@@ -11,12 +11,12 @@
 		License.
 
 
-
-
 -->
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
 
     <string name="accept_location">लोकेशन रेकर्ड गर्नुहोस</string>
+
+
     <string name="accuracy">एक्युरेसी</string>
     <string name="activity_not_found">No activity found to handle: %s</string>
     <string name="add_another">Add Group</string>
@@ -104,7 +104,7 @@
     <string name="main_menu">Main Menu</string>
     <string name="main_menu_details">Data collection made easier&#8230;</string>
     <string name="manage_files">Delete Saved Form</string>
-    <string name="mark_finished">डाटा अप्लोडको लागि तयार । </string>
+    <string name="mark_finished">के यो डाटा अपलोडको लागि तयार छ? </string>
     <string name="noselect_error">Sorry, you have not selected any forms!</string>
     <string name="no_connection">No network connection available</string>
     <string name="no_items_display">Nothing available to display.</string>
@@ -129,7 +129,7 @@
     <string name="review_data_button">Edit Saved Form (%s)</string>
     <string name="saved_data">Incomplete (%s)</string>
     <string name="save_all_answers">Save Form</string>
-    <string name="save_enter_data_description">बधाई छ , तपाईंले यो घरको सेर्बे पुरा गर्नुभयो । </string>
+    <string name="save_enter_data_description">बधाई छ, तपाईले यस घरको सर्भे पुरा गर्नुभयो ।</string>
     <string name="saving_form">Saving Form</string>
     <string name="sending_items">Sending %1$s of %2$s form(s)</string>
     <string name="send_data">Send Finalized Form</string>
@@ -186,7 +186,7 @@
     <string name="choose_image">फोटो छान्नुहोस्</string>
     <string name="selected">Selected: </string>
     <string name="select_answer">Select Answer</string>
-    <string name="save_form_as">Name this form</string>
+    <string name="save_form_as">रेकर्डको नाम:</string>
     <string name="save_as_error">Saved name must not be blank!</string>
     <string name="edit_prompt">Edit Prompt</string>
     <string name="selected_google_account_text">Google account</string>
@@ -337,7 +337,7 @@
     <string name="change_sms_receiver">SMS Receiver</string>
     <string name="surveyor">surveyor</string>
     <string name="surveyor_title">Surveyor</string>
-    <string name="surveyor_id">Unique Id of Surveyor ( If Provided)</string>
+    <string name="surveyor_id">Unique Id of Surveyor (If Provided)</string>
     <string name="surveyor_id_title">Surveyor ID</string>
     <string name="sms_receiver_title">SMS Receiver</string>
     <string name="sms_receiver_error">Invalid SMS Receiver</string>
