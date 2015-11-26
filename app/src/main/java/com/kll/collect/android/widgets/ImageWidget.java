@@ -133,6 +133,7 @@ public class ImageWidget extends QuestionWidget implements IBinaryWidget {
         mChooseButton.setPadding(20, 20, 20, 20);
         mChooseButton.setEnabled(!prompt.isReadOnly());
         mChooseButton.setLayoutParams(params);
+        mChooseButton.setVisibility(View.GONE);
 
         // launch capture intent on click
         mChooseButton.setOnClickListener(new View.OnClickListener() {

@@ -80,6 +80,7 @@ public class SelectMultiWidget extends QuestionWidget {
                 c.setId(QuestionWidget.newUniqueId());
                 c.setText(prompt.getSelectChoiceText(mItems.get(i)));
                 c.setTextSize(TypedValue.COMPLEX_UNIT_DIP, mAnswerFontsize);
+                c.setPadding(0,10,0,10);
                 c.setFocusable(!prompt.isReadOnly());
                 c.setEnabled(!prompt.isReadOnly());
                 

@@ -79,6 +79,7 @@ public class SelectOneWidget extends QuestionWidget implements
 				r.setTextSize(TypedValue.COMPLEX_UNIT_DIP, mAnswerFontsize);
 				r.setTag(Integer.valueOf(i));
 				r.setId(QuestionWidget.newUniqueId());
+				r.setPadding(0,10,0,10);
 				r.setEnabled(!prompt.isReadOnly());
 				r.setFocusable(!prompt.isReadOnly());
 
