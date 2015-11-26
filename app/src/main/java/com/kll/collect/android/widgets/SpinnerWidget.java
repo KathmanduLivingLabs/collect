@@ -85,6 +85,7 @@ public class SpinnerWidget extends QuestionWidget {
         autoCompleteTextView.enoughToFilter();
         autoCompleteTextView.setCursorVisible(true);
         autoCompleteTextView.hideClearButton();
+
         //autoCompleteTextView.showDropDown();
 
 
