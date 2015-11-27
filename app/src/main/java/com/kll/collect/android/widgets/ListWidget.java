@@ -42,6 +42,7 @@ import android.util.TypedValue;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.CompoundButton;
@@ -187,7 +188,7 @@ public class ListWidget extends QuestionWidget implements OnCheckedChangeListene
                 TextView label = new TextView(getContext());
 
                 label.setText(prompt.getSelectChoiceText(mItems.get(i)));
-                label.setTextSize(TypedValue.COMPLEX_UNIT_DIP, mAnswerFontsize-10);
+                label.setTextSize(TypedValue.COMPLEX_UNIT_DIP, mAnswerFontsize-12);
                 //label.setTextSize(TypedValue.COMPLEX_UNIT_DIP,1);
                 label.setGravity(Gravity.CENTER);
                 if (!displayLabel) {
@@ -223,16 +224,18 @@ public class ListWidget extends QuestionWidget implements OnCheckedChangeListene
                 if ( displayLabel ) {
                 	buttonParams.addRule(RelativeLayout.BELOW, labelId );
                 }
+                answer.setGravity(Gravity.CENTER);
                 answer.addView(r, buttonParams);
                 answer.setPadding(1, 0, 1, 0);
-                r.setGravity(Gravity.RIGHT);
+
                 buttonParams.setMargins(10,10,10,10);
                 // Each button gets equal weight
                 LinearLayout.LayoutParams answerParams =
                     new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT ,
                             LayoutParams.WRAP_CONTENT);
                 answerParams.weight = 1;
-                answer.setGravity(Gravity.RIGHT);
+
+
 
                 buttonLayout.addView(answer, answerParams);
 
@@ -342,7 +345,7 @@ public class ListWidget extends QuestionWidget implements OnCheckedChangeListene
 
         // Put the question text on the left half of the screen
         LinearLayout.LayoutParams labelParams =
-            new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+            new LinearLayout.LayoutParams(400, LayoutParams.WRAP_CONTENT);
 
 
         questionLayout = new LinearLayout(getContext());
