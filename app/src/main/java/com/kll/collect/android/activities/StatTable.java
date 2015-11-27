@@ -142,11 +142,11 @@ public class StatTable extends Activity implements DiskSyncListener{
             String formID = "A";
             for (int i = 0; i < instanceStatProviders.size(); i++) {
                 if (i == 0)
-                    smsBody = smsBody + formID + seperator + Integer.toString(instanceStatProviders.get(i).getCompleted()) + seperator + Integer.toString(instanceStatProviders.get(i).getSent()) + seperator + Integer.toString(instanceStatProviders.get(i).getNo_attachment()) + seperator + Integer.toString(instanceStatProviders.get(i).getNot_sent());
+                    smsBody = smsBody + formID + seperator + Integer.toString(instanceStatProviders.get(i).getCompleted()) + seperator + Integer.toString(instanceStatProviders.get(i).getAllSent()) + seperator + Integer.toString(instanceStatProviders.get(i).getNo_attachment()) + seperator + Integer.toString(instanceStatProviders.get(i).getNot_sent());
                 else if ((i == instanceStatProviders.size() - 1)&& !(surveyor_id.equals("")))
-                    smsBody = smsBody + seperator + formID + seperator + Integer.toString(instanceStatProviders.get(i).getCompleted()) + seperator + Integer.toString(instanceStatProviders.get(i).getSent()) + seperator + Integer.toString(instanceStatProviders.get(i).getNo_attachment()) + seperator + Integer.toString(instanceStatProviders.get(i).getNot_sent()) + seperator + surveyor_id;
+                    smsBody = smsBody + seperator + formID + seperator + Integer.toString(instanceStatProviders.get(i).getCompleted()) + seperator + Integer.toString(instanceStatProviders.get(i).getAllSent()) + seperator + Integer.toString(instanceStatProviders.get(i).getNo_attachment()) + seperator + Integer.toString(instanceStatProviders.get(i).getNot_sent()) + seperator + surveyor_id;
                 else
-                    smsBody = smsBody + seperator + formID + seperator + Integer.toString(instanceStatProviders.get(i).getCompleted()) + seperator + Integer.toString(instanceStatProviders.get(i).getSent()) + seperator + Integer.toString(instanceStatProviders.get(i).getNo_attachment()) + seperator + Integer.toString(instanceStatProviders.get(i).getNot_sent());
+                    smsBody = smsBody + seperator + formID + seperator + Integer.toString(instanceStatProviders.get(i).getCompleted()) + seperator + Integer.toString(instanceStatProviders.get(i).getAllSent()) + seperator + Integer.toString(instanceStatProviders.get(i).getNo_attachment()) + seperator + Integer.toString(instanceStatProviders.get(i).getNot_sent());
                 char temp = (char) (((int) formID.charAt(0))+1);
                 formID = Character.toString(temp);
             }
@@ -248,10 +248,11 @@ public class StatTable extends Activity implements DiskSyncListener{
         }
         for (int i = 0;i<instanceStat.size();i++){
             ArrayList<String> child = new ArrayList<String>();
-            child.add("Completed: " + instanceStat.get(i).getCompleted());
-            child.add("Sent: " + instanceStat.get(i).getSent());
-            child.add("Attachment not Sent: " + instanceStat.get(i).getNo_attachment());
-            child.add("Not Sent: " + instanceStat.get(i).getNot_sent());
+            child.add("सर्वे पुरा गरिएका घर संख्या = "+ instanceStat.get(i).getCompleted());
+            Log.i("सर्वे पुरा गरिएका घर संख्या = ", Integer.toString(instanceStat.get(i).getCompleted()));
+            child.add("डाटा र फोटो दुवै अपलोड संख्या = " + instanceStat.get(i).getAllSent());
+            child.add("डाटा मात्र अपलोड संख्या = " + instanceStat.get(i).getNo_attachment());
+            child.add("अपलोड गर्न बाँकी संख्या = " + instanceStat.get(i).getNot_sent());
             listDataChild.put(listDataHeader.get(i), child);
         }
     }

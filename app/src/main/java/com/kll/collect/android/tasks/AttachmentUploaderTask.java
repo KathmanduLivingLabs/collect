@@ -1,32 +1,22 @@
-/*
- * Copyright (C) 2009 University of Washington
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
- * in compliance with the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License
- * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing permissions and limitations under
- * the License.
- */
-
 package com.kll.collect.android.tasks;
 
-import java.io.File;
-import java.io.UnsupportedEncodingException;
-import java.net.SocketTimeoutException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.net.UnknownHostException;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import android.content.ContentValues;
+import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.preference.PreferenceManager;
+import android.util.Log;
+import android.webkit.MimeTypeMap;
 
 import com.kll.collect.android.R;
+import com.kll.collect.android.application.Collect;
+import com.kll.collect.android.listeners.InstanceUploaderListener;
+import com.kll.collect.android.logic.PropertyManager;
+import com.kll.collect.android.preferences.PreferencesActivity;
+import com.kll.collect.android.provider.InstanceProviderAPI;
+import com.kll.collect.android.utilities.WebUtils;
+
 import org.opendatakit.httpclientandroidlib.Header;
 import org.opendatakit.httpclientandroidlib.HttpResponse;
 import org.opendatakit.httpclientandroidlib.HttpStatus;
@@ -41,30 +31,22 @@ import org.opendatakit.httpclientandroidlib.entity.mime.content.FileBody;
 import org.opendatakit.httpclientandroidlib.entity.mime.content.StringBody;
 import org.opendatakit.httpclientandroidlib.protocol.HttpContext;
 
-import com.kll.collect.android.application.Collect;
-import com.kll.collect.android.listeners.InstanceUploaderListener;
-import com.kll.collect.android.logic.PropertyManager;
-import com.kll.collect.android.preferences.PreferencesActivity;
-import com.kll.collect.android.provider.InstanceProviderAPI;
-import com.kll.collect.android.provider.InstanceProviderAPI.InstanceColumns;
-import com.kll.collect.android.utilities.WebUtils;
-
-import android.content.ContentValues;
-import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.preference.PreferenceManager;
-import android.util.Log;
-import android.webkit.MimeTypeMap;
+import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.SocketTimeoutException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.net.UnknownHostException;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
- * Background task for uploading completed forms.
- *
- * @author Carl Hartung (carlhartung@gmail.com)
+ * Created by pujan on 11/27/15.
  */
-public class InstanceUploaderNoAttachmentTask extends AsyncTask<Long, Integer, InstanceUploaderNoAttachmentTask.Outcome> {
-
+public class AttachmentUploaderTask extends AsyncTask<Long, Integer, AttachmentUploaderTask.Outcome> {
     private static final String t = "InstanceUploaderTask";
     // it can take up to 27 seconds to spin up Aggregate
     private static final int CONNECTION_TIMEOUT = 60000;
@@ -158,8 +140,8 @@ public class InstanceUploaderNoAttachmentTask extends AsyncTask<Long, Integer, I
                                         fail
                                                 + "Unexpected redirection attempt to a different host: "
                                                 + uNew.toString());
-                                cv.put(InstanceColumns.STATUS,
-                                        InstanceProviderAPI.STATUS_SUBMISSION_FAILED);
+                                cv.put(InstanceProviderAPI.InstanceColumns.STATUS,
+                                        InstanceProviderAPI.STATUS_ATTACHMENT_SENDING_FAILED);
                                 Collect.getInstance().getContentResolver()
                                         .update(toUpdate, cv, null, null);
                                 return true;
@@ -167,8 +149,8 @@ public class InstanceUploaderNoAttachmentTask extends AsyncTask<Long, Integer, I
                         } catch (Exception e) {
                             e.printStackTrace();
                             outcome.mResults.put(id, fail + urlString + " " + e.toString());
-                            cv.put(InstanceColumns.STATUS,
-                                    InstanceProviderAPI.STATUS_SUBMISSION_FAILED);
+                            cv.put(InstanceProviderAPI.InstanceColumns.STATUS,
+                                    InstanceProviderAPI.STATUS_ATTACHMENT_SENDING_FAILED);
                             Collect.getInstance().getContentResolver()
                                     .update(toUpdate, cv, null, null);
                             return true;
@@ -184,8 +166,8 @@ public class InstanceUploaderNoAttachmentTask extends AsyncTask<Long, Integer, I
                                 id,
                                 fail
                                         + "Invalid status code on Head request.  If you have a web proxy, you may need to login to your network. ");
-                        cv.put(InstanceColumns.STATUS,
-                                InstanceProviderAPI.STATUS_SUBMISSION_FAILED);
+                        cv.put(InstanceProviderAPI.InstanceColumns.STATUS,
+                                InstanceProviderAPI.STATUS_ATTACHMENT_SENDING_FAILED);
                         Collect.getInstance().getContentResolver()
                                 .update(toUpdate, cv, null, null);
                         return true;
@@ -196,7 +178,7 @@ public class InstanceUploaderNoAttachmentTask extends AsyncTask<Long, Integer, I
                 Log.e(t, e.toString());
                 WebUtils.clearHttpConnectionManager();
                 outcome.mResults.put(id, fail + "Client Protocol Exception");
-                cv.put(InstanceColumns.STATUS, InstanceProviderAPI.STATUS_SUBMISSION_FAILED);
+                cv.put(InstanceProviderAPI.InstanceColumns.STATUS, InstanceProviderAPI.STATUS_ATTACHMENT_SENDING_FAILED);
                 Collect.getInstance().getContentResolver().update(toUpdate, cv, null, null);
                 return true;
             } catch (ConnectTimeoutException e) {
@@ -204,7 +186,7 @@ public class InstanceUploaderNoAttachmentTask extends AsyncTask<Long, Integer, I
                 Log.e(t, e.toString());
                 WebUtils.clearHttpConnectionManager();
                 outcome.mResults.put(id, fail + "Connection Timeout");
-                cv.put(InstanceColumns.STATUS, InstanceProviderAPI.STATUS_SUBMISSION_FAILED);
+                cv.put(InstanceProviderAPI.InstanceColumns.STATUS, InstanceProviderAPI.STATUS_ATTACHMENT_SENDING_FAILED);
                 Collect.getInstance().getContentResolver().update(toUpdate, cv, null, null);
                 return true;
             } catch (UnknownHostException e) {
@@ -212,15 +194,15 @@ public class InstanceUploaderNoAttachmentTask extends AsyncTask<Long, Integer, I
                 Log.e(t, e.toString());
                 WebUtils.clearHttpConnectionManager();
                 outcome.mResults.put(id, fail + e.toString() + " :: Network Connection Failed");
-                cv.put(InstanceColumns.STATUS, InstanceProviderAPI.STATUS_SUBMISSION_FAILED);
+                cv.put(InstanceProviderAPI.InstanceColumns.STATUS, InstanceProviderAPI.STATUS_ATTACHMENT_SENDING_FAILED);
                 Collect.getInstance().getContentResolver().update(toUpdate, cv, null, null);
                 return true;
             } catch (SocketTimeoutException e) {
                 e.printStackTrace();
                 Log.e(t, e.toString());
                 WebUtils.clearHttpConnectionManager();
-                outcome.mResults.put(id, fail + "Connection TimeoutS");
-                cv.put(InstanceColumns.STATUS, InstanceProviderAPI.STATUS_SUBMISSION_FAILED);
+                outcome.mResults.put(id, fail + "Connection Timeout");
+                cv.put(InstanceProviderAPI.InstanceColumns.STATUS, InstanceProviderAPI.STATUS_ATTACHMENT_SENDING_FAILED);
                 Collect.getInstance().getContentResolver().update(toUpdate, cv, null, null);
                 return true;
             } catch (HttpHostConnectException e) {
@@ -228,7 +210,7 @@ public class InstanceUploaderNoAttachmentTask extends AsyncTask<Long, Integer, I
                 Log.e(t, e.toString());
                 WebUtils.clearHttpConnectionManager();
                 outcome.mResults.put(id, fail + "Network Connection Refused");
-                cv.put(InstanceColumns.STATUS, InstanceProviderAPI.STATUS_SUBMISSION_FAILED);
+                cv.put(InstanceProviderAPI.InstanceColumns.STATUS, InstanceProviderAPI.STATUS_ATTACHMENT_SENDING_FAILED);
                 Collect.getInstance().getContentResolver().update(toUpdate, cv, null, null);
                 return true;
             } catch (Exception e) {
@@ -238,7 +220,7 @@ public class InstanceUploaderNoAttachmentTask extends AsyncTask<Long, Integer, I
                 String msg = e.getMessage();
                 if ( msg == null ) msg = e.toString();
                 outcome.mResults.put(id, fail + "Generic Exception: " + msg);
-                cv.put(InstanceColumns.STATUS, InstanceProviderAPI.STATUS_SUBMISSION_FAILED);
+                cv.put(InstanceProviderAPI.InstanceColumns.STATUS, InstanceProviderAPI.STATUS_ATTACHMENT_SENDING_FAILED);
                 Collect.getInstance().getContentResolver().update(toUpdate, cv, null, null);
                 return true;
             }
@@ -274,7 +256,7 @@ public class InstanceUploaderNoAttachmentTask extends AsyncTask<Long, Integer, I
 
         if (!instanceFile.exists() && !submissionFile.exists()) {
             outcome.mResults.put(id, fail + "instance XML file does not exist!");
-            cv.put(InstanceColumns.STATUS, InstanceProviderAPI.STATUS_SUBMISSION_FAILED);
+            cv.put(InstanceProviderAPI.InstanceColumns.STATUS, InstanceProviderAPI.STATUS_ATTACHMENT_SENDING_FAILED);
             Collect.getInstance().getContentResolver().update(toUpdate, cv, null, null);
             return true;
         }
@@ -299,7 +281,19 @@ public class InstanceUploaderNoAttachmentTask extends AsyncTask<Long, Integer, I
             }
             if (fileName.equals(instanceFile.getName())) {
                 continue; // the xml file has already been added
-            }else {
+            } else if (fileName.equals(submissionFile.getName())) {
+                continue; // the xml file has already been added
+            } else if (openRosaServer) {
+                files.add(f);
+            } else if (extension.equals("jpg")) { // legacy 0.9x
+                files.add(f);
+            } else if (extension.equals("3gpp")) { // legacy 0.9x
+                files.add(f);
+            } else if (extension.equals("3gp")) { // legacy 0.9x
+                files.add(f);
+            } else if (extension.equals("mp4")) { // legacy 0.9x
+                files.add(f);
+            } else {
                 Log.w(t, "unrecognized file type " + f.getName());
             }
         }
@@ -343,7 +337,54 @@ public class InstanceUploaderNoAttachmentTask extends AsyncTask<Long, Integer, I
                     entity.addPart(f.getName(), fb);
                     byteCount += f.length();
                     Log.i(t, "added xml file " + f.getName());
+                } else if (extension.equals("jpg")) {
+                    fb = new FileBody(f, "image/jpeg");
+                    entity.addPart(f.getName(), fb);
+                    byteCount += f.length();
+                    Log.i(t, "added image file " + f.getName());
+                } else if (extension.equals("3gpp")) {
+                    fb = new FileBody(f, "audio/3gpp");
+                    entity.addPart(f.getName(), fb);
+                    byteCount += f.length();
+                    Log.i(t, "added audio file " + f.getName());
+                } else if (extension.equals("3gp")) {
+                    fb = new FileBody(f, "video/3gpp");
+                    entity.addPart(f.getName(), fb);
+                    byteCount += f.length();
+                    Log.i(t, "added video file " + f.getName());
+                } else if (extension.equals("mp4")) {
+                    fb = new FileBody(f, "video/mp4");
+                    entity.addPart(f.getName(), fb);
+                    byteCount += f.length();
+                    Log.i(t, "added video file " + f.getName());
+                } else if (extension.equals("csv")) {
+                    fb = new FileBody(f, "text/csv");
+                    entity.addPart(f.getName(), fb);
+                    byteCount += f.length();
+                    Log.i(t, "added csv file " + f.getName());
+                } else if (f.getName().endsWith(".amr")) {
+                    fb = new FileBody(f, "audio/amr");
+                    entity.addPart(f.getName(), fb);
+                    Log.i(t, "added audio file " + f.getName());
+                } else if (extension.equals("xls")) {
+                    fb = new FileBody(f, "application/vnd.ms-excel");
+                    entity.addPart(f.getName(), fb);
+                    byteCount += f.length();
+                    Log.i(t, "added xls file " + f.getName());
+                } else if (contentType != null) {
+                    fb = new FileBody(f, contentType);
+                    entity.addPart(f.getName(), fb);
+                    byteCount += f.length();
+                    Log.i(t,
+                            "added recognized filetype (" + contentType + ") " + f.getName());
+                } else {
+                    contentType = "application/octet-stream";
+                    fb = new FileBody(f, contentType);
+                    entity.addPart(f.getName(), fb);
+                    byteCount += f.length();
+                    Log.w(t, "added unrecognized file (" + contentType + ") " + f.getName());
                 }
+
                 // we've added at least one attachment to the request...
                 if (j + 1 < files.size()) {
                     if ((j-lastJ+1 > 100) || (byteCount + files.get(j + 1).length() > 10000000L)) {
@@ -386,8 +427,8 @@ public class InstanceUploaderNoAttachmentTask extends AsyncTask<Long, Integer, I
                         outcome.mResults.put(id, fail + response.getStatusLine().getReasonPhrase()
                                 + " (" + responseCode + ") at " + urlString);
                     }
-                    cv.put(InstanceColumns.STATUS,
-                            InstanceProviderAPI.STATUS_SUBMISSION_FAILED);
+                    cv.put(InstanceProviderAPI.InstanceColumns.STATUS,
+                            InstanceProviderAPI.STATUS_ATTACHMENT_SENDING_FAILED);
                     Collect.getInstance().getContentResolver()
                             .update(toUpdate, cv, null, null);
                     return true;
@@ -399,7 +440,7 @@ public class InstanceUploaderNoAttachmentTask extends AsyncTask<Long, Integer, I
                 String msg = e.getMessage();
                 if ( msg == null ) msg = e.toString();
                 outcome.mResults.put(id, fail + "Generic Exception. " + msg);
-                cv.put(InstanceColumns.STATUS, InstanceProviderAPI.STATUS_SUBMISSION_FAILED);
+                cv.put(InstanceProviderAPI.InstanceColumns.STATUS, InstanceProviderAPI.STATUS_ATTACHMENT_SENDING_FAILED);
                 Collect.getInstance().getContentResolver().update(toUpdate, cv, null, null);
                 return true;
             }
@@ -407,7 +448,7 @@ public class InstanceUploaderNoAttachmentTask extends AsyncTask<Long, Integer, I
 
         // if it got here, it must have worked
         outcome.mResults.put(id, Collect.getInstance().getString(R.string.success));
-        cv.put(InstanceColumns.STATUS, InstanceProviderAPI.STATUS_ATTACHMENT_NOT_SENT);
+        cv.put(InstanceProviderAPI.InstanceColumns.STATUS, InstanceProviderAPI.STATUS_SUBMITTED);
         Collect.getInstance().getContentResolver().update(toUpdate, cv, null, null);
         return true;
     }
@@ -417,12 +458,12 @@ public class InstanceUploaderNoAttachmentTask extends AsyncTask<Long, Integer, I
     protected Outcome doInBackground(Long... values) {
         Outcome outcome = new Outcome();
 
-        String selection = InstanceColumns._ID + "=?";
+        String selection = InstanceProviderAPI.InstanceColumns._ID + "=?";
         String[] selectionArgs = new String[(values == null) ? 0 : values.length];
         if ( values != null ) {
             for (int i = 0; i < values.length; i++) {
                 if (i != values.length - 1) {
-                    selection += " or " + InstanceColumns._ID + "=?";
+                    selection += " or " + InstanceProviderAPI.InstanceColumns._ID + "=?";
                 }
                 selectionArgs[i] = values[i].toString();
             }
@@ -439,7 +480,7 @@ public class InstanceUploaderNoAttachmentTask extends AsyncTask<Long, Integer, I
         Cursor c = null;
         try {
             c = Collect.getInstance().getContentResolver()
-                    .query(InstanceColumns.CONTENT_URI, null, selection, selectionArgs, null);
+                    .query(InstanceProviderAPI.InstanceColumns.CONTENT_URI, null, selection, selectionArgs, null);
 
             if (c.getCount() > 0) {
                 c.moveToPosition(-1);
@@ -448,11 +489,11 @@ public class InstanceUploaderNoAttachmentTask extends AsyncTask<Long, Integer, I
                         return outcome;
                     }
                     publishProgress(c.getPosition() + 1, c.getCount());
-                    String instance = c.getString(c.getColumnIndex(InstanceColumns.INSTANCE_FILE_PATH));
-                    String id = c.getString(c.getColumnIndex(InstanceColumns._ID));
-                    Uri toUpdate = Uri.withAppendedPath(InstanceColumns.CONTENT_URI, id);
+                    String instance = c.getString(c.getColumnIndex(InstanceProviderAPI.InstanceColumns.INSTANCE_FILE_PATH));
+                    String id = c.getString(c.getColumnIndex(InstanceProviderAPI.InstanceColumns._ID));
+                    Uri toUpdate = Uri.withAppendedPath(InstanceProviderAPI.InstanceColumns.CONTENT_URI, id);
 
-                    int subIdx = c.getColumnIndex(InstanceColumns.SUBMISSION_URI);
+                    int subIdx = c.getColumnIndex(InstanceProviderAPI.InstanceColumns.SUBMISSION_URI);
                     String urlString = c.isNull(subIdx) ? null : c.getString(subIdx);
                     if (urlString == null) {
                         SharedPreferences settings =
@@ -526,3 +567,4 @@ public class InstanceUploaderNoAttachmentTask extends AsyncTask<Long, Integer, I
         }
     }
 }
+

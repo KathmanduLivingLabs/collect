@@ -73,8 +73,8 @@ public class AttachmentUploaderList extends ListActivity implements
 
     public Cursor getUnsentCursor() {
         // get all complete or failed submission instances
-        String selection = InstanceColumns.STATUS + "=?";
-        String selectionArgs[] = { InstanceProviderAPI.STATUS_ATTACHMENT_NOT_SENT};
+        String selection = InstanceColumns.STATUS + "=? or " + InstanceColumns.STATUS + "=?";
+        String selectionArgs[] = { InstanceProviderAPI.STATUS_ATTACHMENT_NOT_SENT,InstanceProviderAPI.STATUS_ATTACHMENT_SENDING_FAILED};
         String sortOrder = InstanceColumns.DISPLAY_NAME + " ASC";
         Cursor c = managedQuery(InstanceColumns.CONTENT_URI, null, selection,
                 selectionArgs, sortOrder);
@@ -226,7 +226,7 @@ public class AttachmentUploaderList extends ListActivity implements
         for (int i = 0; i < mSelected.size(); i++) {
             instanceIDs[i] = mSelected.get(i);
         }
-        Intent i = new Intent(this, InstanceUploaderActivity.class);
+        Intent i = new Intent(this,AttachmentUploaderActivity.class);
         i.putExtra(FormEntryActivity.KEY_INSTANCES, instanceIDs);
         startActivity(i);
 

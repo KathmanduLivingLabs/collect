@@ -344,6 +344,7 @@
     <string name="img_compresion">IMAGE COMPRESSION</string>
     <string name="enable_img_compression_summary">Compress image size to reduce upload time and storage</string>
     <string name="enable_img_compression">Enable Image Compression</string>
+    <string name="completed">सर्वे पुरा गरिएका घर संख्या</string>
 
 
 </resources>

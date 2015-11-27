@@ -83,7 +83,7 @@ public class InstanceUploaderTask extends AsyncTask<Long, Integer, InstanceUploa
      * @param id
      * @param instanceFilePath
      * @param toUpdate - Instance URL for recording status update.
-     * @param httpclient - client connection
+     * @param //httpclient - client connection
      * @param localContext - context (e.g., credentials, cookies) for client connection
      * @param uriRemap - mapping of Uris to avoid redirects on subsequent invocations
      * @return false if credentials are required and we should terminate immediately.

@@ -34,9 +34,10 @@ public class InstanceStatProvider {
         return not_sent;
     }
 
-    public Integer getSent()
+    public Integer getAllSent()
     {
-        return sent;
+
+        return (sent-no_attachment);
     }
 
     public void setCompleted(Integer integer)

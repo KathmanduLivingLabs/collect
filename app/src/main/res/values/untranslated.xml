@@ -16,6 +16,6 @@
 	<string translatable="false" name="default_server_url">https://odk.ona.io/klltesting</string>
 	<string translatable="false" name="default_odk_formlist">/formList</string>
 	<string translatable="false" name="default_odk_submission">/submission</string>
-	<string translatable="false" name="stat_title">Daily Stat and Summary of Data Collection</string>
+	<string translatable="false" name="stat_title">सर्वेक्षणको दैनिक तथ्याङ्क</string>
     <item name="mapview" type="id"/>
 </resources>
