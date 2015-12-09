@@ -2512,7 +2512,9 @@ public class FormEntryActivity extends Activity implements AnimationListener,
 		}
 		if (GeoPointWidget.locationRecorded) {
 			Log.i("Should Stop", "Gps fixing");
-			mLocationManager.removeUpdates(this);
+			if (mLocationManager != null) {
+				mLocationManager.removeUpdates(this);
+			}
 		}
 
         FormController formController = Collect.getInstance().getFormController();
@@ -2605,7 +2607,7 @@ public class FormEntryActivity extends Activity implements AnimationListener,
 
 	@Override
 	protected void onDestroy() {
-		Log.i("Activity","Destroyed");
+		Log.i("Activity", "Destroyed");
 		if(mLocationManager!=null) {
 			mLocationManager.removeUpdates(this);
 		}

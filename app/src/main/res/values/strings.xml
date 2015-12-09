@@ -345,6 +345,8 @@
     <string name="enable_img_compression_summary">Compress image size to reduce upload time and storage</string>
     <string name="enable_img_compression">Enable Image Compression</string>
     <string name="completed">सर्वे पुरा गरिएका घर संख्या</string>
+    <string name="default_sms_reciever">7001</string>
+    <string name="default_sms_receiver">7001</string>
 
 
 </resources>

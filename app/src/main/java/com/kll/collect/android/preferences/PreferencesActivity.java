@@ -211,6 +211,7 @@ public class PreferencesActivity extends PreferenceActivity implements
 				return true;
 			}
 		});
+
 		mSmsReceiverPreference = (EditTextPreference) findPreference(KEY_SMS_RECEIVER);
 		mSmsReceiverPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
 			@Override
@@ -549,7 +550,7 @@ public class PreferencesActivity extends PreferenceActivity implements
 	}
 
 	private boolean checkReceiver(String sms_receiver) {
-		if((sms_receiver.length()==10 && sms_receiver.startsWith("9")) || (sms_receiver.length()==14 && sms_receiver.startsWith("+9779"))){
+		if((sms_receiver.length()==10 && sms_receiver.startsWith("9")) || (sms_receiver.length()==4)  || (sms_receiver.length()==14 && sms_receiver.startsWith("+9779"))){
 			return true;
 		}else
 		{

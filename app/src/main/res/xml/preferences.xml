@@ -21,7 +21,10 @@
             android:inputType="textNoSuggestions"
             android:key="server_url"
             android:title="@string/server_url"
-            android:visibility="gone"/>
+            android:clickable="false"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"/>
         <EditTextPreference
             android:id="@+id/username"
             android:dialogTitle="@string/change_username"
@@ -76,12 +79,12 @@
             android:title="@string/submission_url" />
         <EditTextPreference
             android:id="@+id/sms_receiver"
-            android:defaultValue=""
+            android:defaultValue="@string/default_sms_receiver"
             android:dialogTitle="@string/change_sms_receiver"
             android:inputType="textNoSuggestions"
             android:key="sms_receiver"
-            android:layout="?android:attr/preferenceLayoutChild"
-            android:title="@string/sms_receiver_title" />
+            android:title="@string/sms_receiver_title"
+             />
     </PreferenceCategory>
     <PreferenceCategory
         android:key="@string/surveyor"
