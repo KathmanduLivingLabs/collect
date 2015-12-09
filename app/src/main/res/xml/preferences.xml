@@ -21,10 +21,7 @@
             android:inputType="textNoSuggestions"
             android:key="server_url"
             android:title="@string/server_url"
-            android:clickable="false"
-            android:cursorVisible="false"
-            android:focusable="false"
-            android:focusableInTouchMode="false"/>
+            />
         <EditTextPreference
             android:id="@+id/username"
             android:dialogTitle="@string/change_username"
@@ -77,14 +74,26 @@
             android:key="submission_url"
             android:layout="?android:attr/preferenceLayoutChild"
             android:title="@string/submission_url" />
+
+
+    </PreferenceCategory>
+    <PreferenceCategory android:title="Change Default SMS Receiver:">
+        <CheckBoxPreference
+            android:id="@+id/change_default_sms_receiver"
+            android:defaultValue="false"
+            android:key="change_sms_receiver"
+            android:summary="Check to change the default sms receiver"
+            android:title="Change the default sms reciver"
+            />
         <EditTextPreference
             android:id="@+id/sms_receiver"
+            android:dependency="change_sms_receiver"
             android:defaultValue="@string/default_sms_receiver"
             android:dialogTitle="@string/change_sms_receiver"
             android:inputType="textNoSuggestions"
             android:key="sms_receiver"
             android:title="@string/sms_receiver_title"
-             />
+            />
     </PreferenceCategory>
     <PreferenceCategory
         android:key="@string/surveyor"
@@ -143,7 +152,7 @@
             android:title="@string/font_size" />
         <CheckBoxPreference
             android:id="@+id/default_completed"
-            android:defaultValue="true"
+            android:defaultValue="false"
             android:key="default_completed"
             android:summary="@string/default_completed_summary"
             android:title="@string/default_completed" />
@@ -172,7 +181,7 @@
         android:title="@string/img_compresion" >
         <CheckBoxPreference
             android:id="@+id/enable_image_compression"
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:key="enable_img_compression"
             android:summary="@string/enable_img_compression_summary"
             android:title="@string/enable_img_compression" />
@@ -183,7 +192,7 @@
         android:title="@string/gps" >
         <CheckBoxPreference
             android:id="@+id/enable_gps_fix"
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:key="enable_gps_fix"
             android:summary="@string/enable_gps_fix_summary"
             android:title="@string/enable_gps_fix" />

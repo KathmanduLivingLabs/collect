@@ -11,4 +11,5 @@
         android:paddingBottom="10dp"
         android:entries="@array/main_settings" >
     </ListView>
+
 </LinearLayout>

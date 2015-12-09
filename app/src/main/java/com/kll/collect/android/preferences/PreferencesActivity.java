@@ -43,6 +43,8 @@ import android.preference.PreferenceScreen;
 import android.provider.MediaStore.Images;
 import android.text.InputFilter;
 import android.text.Spanned;
+import android.widget.Button;
+import android.widget.ListView;
 import android.widget.Toast;
 
 /**
@@ -128,6 +130,8 @@ public class PreferencesActivity extends PreferenceActivity implements
 
 		setTitle(getString(R.string.app_name) + " > "
 				+ getString(R.string.general_preferences));
+		ListView view = getListView();
+
 
 		// not super safe, but we're just putting in this mode to help
 		// administrate

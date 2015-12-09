@@ -347,6 +347,7 @@
     <string name="completed">सर्वे पुरा गरिएका घर संख्या</string>
     <string name="default_sms_reciever">7001</string>
     <string name="default_sms_receiver">7001</string>
+    <string name="default_save_name">save_name</string>
 
 
 </resources>
