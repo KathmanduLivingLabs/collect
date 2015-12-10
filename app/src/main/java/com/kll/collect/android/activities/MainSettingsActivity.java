@@ -79,7 +79,7 @@ public class MainSettingsActivity extends Activity implements OnItemClickListene
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
 		builder.setTitle("Confirm!");
-		builder.setMessage("Are you sure want to revert the setting");
+		builder.setMessage("Are you sure, you want to revert to default settings ?");
 		builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 
 			@Override
