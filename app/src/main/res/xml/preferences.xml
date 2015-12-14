@@ -83,7 +83,7 @@
             android:defaultValue="false"
             android:key="change_sms_receiver"
             android:summary="Check to change the default sms receiver"
-            android:title="Change the default sms reciver"
+            android:title="Change the default sms receiver"
             />
         <EditTextPreference
             android:id="@+id/sms_receiver"

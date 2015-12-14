@@ -129,7 +129,7 @@
     <string name="review_data_button">Edit Saved Form (%s)</string>
     <string name="saved_data">Incomplete (%s)</string>
     <string name="save_all_answers">Save Form</string>
-    <string name="save_enter_data_description">बधाई छ, तपाईले यस घरको सर्भे पुरा गर्नुभयो ।</string>
+    <string name="save_enter_data_description">भूकम्प प्रभावित आवास पुनःनिर्माणको लागि लगत संकलन कार्यक्रममा यहाँले आफ्नो यथार्थ विवरण उपलब्ध गराउनु भएकोमा यहाँलाई केन्द्रीय तथ्यांक विभाग धन्यवाद ज्ञापन गर्दछ ।</string>
     <string name="saving_form">Saving Form</string>
     <string name="sending_items">Sending %1$s of %2$s form(s)</string>
     <string name="send_data">Send Finalized Form</string>

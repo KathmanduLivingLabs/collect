@@ -54,7 +54,7 @@ public class GeoPointWidget extends QuestionWidget implements IBinaryWidget, Loc
 	public static final String ACCURACY_THRESHOLD = "accuracyThreshold";
 	public static final String READ_ONLY = "readOnly";
 
-	public static boolean locationRecorded = false;
+
 
 	public static final double DEFAULT_LOCATION_ACCURACY = 5.0;
 
@@ -210,7 +210,7 @@ public class GeoPointWidget extends QuestionWidget implements IBinaryWidget, Loc
 						.setIndexWaitingForData(mPrompt.getIndex());
 				((Activity) getContext()).startActivityForResult(i,
 						FormEntryActivity.LOCATION_CAPTURE);
-				locationRecorded = true;
+
 			}
 
 		});

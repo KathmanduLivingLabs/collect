@@ -2,8 +2,10 @@ package com.kll.collect.android.activities;
 
 import android.app.Activity;
 
+import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -26,6 +28,7 @@ import android.widget.Toast;
 import com.kll.collect.android.R;
 import com.kll.collect.android.adapters.ExpandableListAdapter;
 import com.kll.collect.android.listeners.DiskSyncListener;
+import com.kll.collect.android.preferences.AdminPreferencesActivity;
 import com.kll.collect.android.preferences.PreferencesActivity;
 import com.kll.collect.android.provider.FormsProviderAPI;
 
@@ -109,7 +112,8 @@ public class StatTable extends Activity implements DiskSyncListener{
         send_sms.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                smsStat(instanceStatProviders);
+                sendSms(instanceStatProviders);
+
             }
         });
 
@@ -121,6 +125,30 @@ public class StatTable extends Activity implements DiskSyncListener{
         return mDiskSyncTask;
     }
 
+    private void sendSms(final ArrayList<InstanceStatProvider> instanceStatProviders) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setTitle("Confirm!");
+        builder.setMessage("Do you really want to send sms?");
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                smsStat(instanceStatProviders);
+
+            }
+        });
+
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        builder.show();
+
+    }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -136,7 +164,8 @@ public class StatTable extends Activity implements DiskSyncListener{
         if(simState != TelephonyManager.SIM_STATE_READY){
             Toast.makeText(getApplicationContext(), "SIM card not ready or not installed", Toast.LENGTH_LONG).show();
 
-        }           try {
+        } else{
+            try {
                 SmsManager smsManager = SmsManager.getDefault();
                 SharedPreferences mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
                 String sms_receiver = mSharedPreferences.getString(PreferencesActivity.KEY_SMS_RECEIVER, null);
@@ -158,6 +187,8 @@ public class StatTable extends Activity implements DiskSyncListener{
                 Toast.makeText(getApplicationContext(), "Your sms has failed...!", Toast.LENGTH_LONG).show();
                 ex.printStackTrace();
             }
+
+        }
 
 
 

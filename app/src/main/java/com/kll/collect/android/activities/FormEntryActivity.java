@@ -335,7 +335,6 @@ public class FormEntryActivity extends Activity implements AnimationListener,
 		});
 
 
-		GeoPointWidget.locationRecorded = false;
 
 		needLocation = mSharedPreferences.getBoolean(PreferencesActivity.KEY_GPS_FIX, false);
 		if(needLocation){
@@ -2493,11 +2492,10 @@ public class FormEntryActivity extends Activity implements AnimationListener,
 	protected void onResume() {
 		super.onResume();
 		Log.i("Activity","Resume");
-		Log.i("Location Recorded", Boolean.toString(GeoPointWidget.locationRecorded));
-		Log.i("Reverse",Boolean.toString(!GeoPointWidget.locationRecorded));
-		Boolean gpsTag = true;
-		gpsTag = !GeoPointWidget.locationRecorded;
-		if (needLocation && gpsTag) {
+
+
+
+		if (needLocation) {
 			Log.i("It is starting","gps");
 			if (mLocationManager != null) {
 				mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5, this);
@@ -2510,12 +2508,7 @@ public class FormEntryActivity extends Activity implements AnimationListener,
 				}
 			}
 		}
-		if (GeoPointWidget.locationRecorded) {
-			Log.i("Should Stop", "Gps fixing");
-			if (mLocationManager != null) {
-				mLocationManager.removeUpdates(this);
-			}
-		}
+
 
         FormController formController = Collect.getInstance().getFormController();
         Collect.getInstance().getActivityLogger().open();
@@ -2701,7 +2694,7 @@ public class FormEntryActivity extends Activity implements AnimationListener,
 		boolean pendingActivityResult = task.hasPendingActivityResult();
 		boolean hasUsedSavepoint = task.hasUsedSavepoint();
 		int requestCode = task.getRequestCode();
-		Log.i("Location Recorded",Boolean.toString(GeoPointWidget.locationRecorded));
+
 		// these are bogus if
 		Log.i("Reqest Code",Integer.toString(requestCode));// pendingActivityResult is
 													// false
@@ -3105,11 +3098,10 @@ public class FormEntryActivity extends Activity implements AnimationListener,
 	protected void onStart() {
 		super.onStart();
 		Log.i("Activity","Start");
-		Log.i("Location Recorded", Boolean.toString(GeoPointWidget.locationRecorded));
-		Log.i("Reverse",Boolean.toString(!GeoPointWidget.locationRecorded));
-		Boolean gpsTag = true;
-		gpsTag = !GeoPointWidget.locationRecorded;
-		if(mLocationManager!=null && gpsTag) {
+
+
+
+		if(mLocationManager!=null) {
 			mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5, this);
 		}
 		Collect.getInstance().getActivityLogger().logOnStart(this);
