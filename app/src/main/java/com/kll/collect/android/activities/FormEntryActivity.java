@@ -1306,8 +1306,9 @@ public class FormEntryActivity extends Activity implements AnimationListener,
 					return null;
 				}
 			};
-			saveAs.setFilters(new InputFilter[] { returnFilter });
+			saveAs.setFilters(new InputFilter[]{returnFilter});
             String saveName = getSaveName();
+
 			if (saveName == null) {
 				// no meta/instanceName field in the form -- see if we have a
 				// name for this instance from a previous save attempt...
@@ -1490,16 +1491,21 @@ public class FormEntryActivity extends Activity implements AnimationListener,
         FormController formController = Collect.getInstance()
                 .getFormController();
         String saveName = formController.getSubmissionMetadata().instanceName;
-        if(mAdminPreferences.getBoolean("savename_from_input", false)) {
-            if(!mAdminPreferences.getString("defaultsave_field","").equals("")) {
-                try {
+		Log.i("Save name",Boolean.toString(mAdminPreferences.getBoolean("savename_from_input", true)));
+        if(mAdminPreferences.getBoolean("savename_from_input", true)) {
+			Log.i("Save name",mAdminPreferences.getString("defaultsave_field",getString(R.string.default_save_name)));
+			if(!mAdminPreferences.getString("defaultsave_field",getString(R.string.default_save_name)).equals("")) {
+
+
+				try {
                     ByteArrayPayload submissionXml = formController.getSubmissionXml();
                     InputStream submissionInput = submissionXml.getPayloadStream();
                     XmlPullParserFactory xmlFactoryObject = XmlPullParserFactory.newInstance();
                     XmlPullParser myparser = xmlFactoryObject.newPullParser();
                     myparser.setInput(new StringReader(IOUtils.toString(submissionInput, "UTF-8")));
                     Log.i("SAVENAME_SUBMISSION", IOUtils.toString(submissionInput, "UTF-8"));
-                    saveName = parseSaveName(mAdminPreferences.getString("defaultsave_field", ""), myparser, formController.getSubmissionMetadata().instanceName);
+                    saveName = parseSaveName(mAdminPreferences.getString("defaultsave_field", getString(R.string.default_save_name)), myparser, formController.getSubmissionMetadata().instanceName);
+
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (XmlPullParserException e){

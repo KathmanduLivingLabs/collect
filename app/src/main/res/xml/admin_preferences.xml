@@ -177,7 +177,7 @@
             android:title="@string/save_form_as" />
         <CheckBoxPreference
             android:id="@+id/mark_as_finalized"
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:key="mark_as_finalized"
             android:summary="@string/found_at_end"
             android:title="@string/mark_finished" />

@@ -252,14 +252,15 @@ public class StatTable extends Activity implements DiskSyncListener{
             mDiskSyncTask.execute((Void[]) null);
         }
         ArrayList<String> formNames = new ArrayList<String>();
-
-        String sortOrder = FormsProviderAPI.FormsColumns.DISPLAY_NAME + " ASC, " + FormsProviderAPI.FormsColumns.JR_VERSION + " DESC";
+        ArrayList<String> formId = new ArrayList<String>();
+         String sortOrder = FormsProviderAPI.FormsColumns.DISPLAY_NAME + " ASC, " + FormsProviderAPI.FormsColumns.JR_VERSION + " DESC";
         Cursor c = managedQuery(FormsProviderAPI.FormsColumns.CONTENT_URI, null, null, null, sortOrder);
         c.moveToFirst();
         for(int j = 0;j < c.getCount();j++){
             formNames.add(c.getString(c.getColumnIndex("displayName")));
-                    c.moveToNext();
 
+            formId.add(c.getString(c.getColumnIndex("jrFormId")));
+            c.moveToNext();
         }
         Log.i("Total form",Integer.toString(formNames.size()));
 
@@ -306,11 +307,12 @@ public class StatTable extends Activity implements DiskSyncListener{
         for(int j = 0;j<formNames.size();j++) {
             instanceStat = new InstanceStatProvider();
             instanceStat.setFormName(formNames.get(j));
-            Log.i("Form name",formNames.get(j));
-            instanceStat.setCompleted((getCompletedCursor(formNames.get(j), finalDate, curDate)).getCount());
-            instanceStat.setSent((getSentCursor(formNames.get(j), finalDate, curDate)).getCount());
-            instanceStat.setNo_attachment((getNo_attachmentCursor(formNames.get(j), finalDate, curDate)).getCount());
-            instanceStat.setNot_sent((getNot_sentCursor(formNames.get(j), finalDate, curDate)).getCount());
+            instanceStat.setFormID(formId.get(j));
+
+            instanceStat.setCompleted((getCompletedCursor(formId.get(j), finalDate, curDate)).getCount());
+            instanceStat.setSent((getSentCursor(formId.get(j), finalDate, curDate)).getCount());
+            instanceStat.setNo_attachment((getNo_attachmentCursor(formId.get(j), finalDate, curDate)).getCount());
+            instanceStat.setNot_sent((getNot_sentCursor(formId.get(j), finalDate, curDate)).getCount());
             instanceStatProviders.add(instanceStat);
         }
 
@@ -335,8 +337,8 @@ public class StatTable extends Activity implements DiskSyncListener{
         }
         for (int i = 0;i<instanceStat.size();i++){
             ArrayList<String> child = new ArrayList<String>();
-            child.add("सर्वे पुरा गरिएका घर संख्या = "+ instanceStat.get(i).getCompleted());
-            Log.i("सर्वे पुरा गरिएका घर संख्या = ", Integer.toString(instanceStat.get(i).getCompleted()));
+            child.add("सर्वे पुरा गरिएका घर संख्या = " + instanceStat.get(i).getCompleted());
+
             child.add("डाटा र फोटो दुवै अपलोड संख्या = " + instanceStat.get(i).getAllSent());
             child.add("डाटा मात्र अपलोड संख्या = " + instanceStat.get(i).getNo_attachment());
             child.add("अपलोड गर्न बाँकी संख्या = " + instanceStat.get(i).getNot_sent());
@@ -344,43 +346,45 @@ public class StatTable extends Activity implements DiskSyncListener{
         }
     }
 
-    private Cursor getNot_sentCursor(String formName, String finaldate, String curDate) {
-        String selection =  "(" + InstanceProviderAPI.InstanceColumns.STATUS + "=? or "+ InstanceProviderAPI.InstanceColumns.STATUS + "=? ) and " + InstanceProviderAPI.InstanceColumns.DISPLAY_NAME + "=? and  ("+ InstanceProviderAPI.InstanceColumns.LAST_STATUS_CHANGE_DATE + " BETWEEN '"+finaldate +"' and '"+curDate+"')";
-        Log.i("Selectiion",selection);
-        String[] selectionArgs = {InstanceProviderAPI.STATUS_COMPLETE, InstanceProviderAPI.STATUS_SUBMISSION_FAILED,formName};
+    private Cursor getNot_sentCursor(String formId, String finaldate, String curDate) {
+        String selection =  "(" + InstanceProviderAPI.InstanceColumns.STATUS + "=? or "+ InstanceProviderAPI.InstanceColumns.STATUS + "=? ) and " + InstanceProviderAPI.InstanceColumns.JR_FORM_ID + "=? and  ("+ InstanceProviderAPI.InstanceColumns.LAST_STATUS_CHANGE_DATE + " BETWEEN '"+finaldate +"' and '"+curDate+"')";
+        Log.i("Form Id",formId);
+        String[] selectionArgs = {InstanceProviderAPI.STATUS_COMPLETE, InstanceProviderAPI.STATUS_SUBMISSION_FAILED,formId};
         Cursor c = managedQuery(InstanceProviderAPI.InstanceColumns.CONTENT_URI, null, selection, selectionArgs,null);
-
+        Log.i("Not sent",Integer.toString(c.getCount()));
         return c;
 
     }
 
-    private Cursor getNo_attachmentCursor(String formName, String finaldate, String curDate) {
-        String selection =  "(" + InstanceProviderAPI.InstanceColumns.STATUS + "=? or " +  InstanceProviderAPI.InstanceColumns.STATUS + "=?) and " + InstanceProviderAPI.InstanceColumns.DISPLAY_NAME + "=? and  ("+ InstanceProviderAPI.InstanceColumns.LAST_STATUS_CHANGE_DATE + " BETWEEN '"+finaldate +"' and '"+curDate+"')";
+    private Cursor getNo_attachmentCursor(String formId, String finaldate, String curDate) {
+        String selection =  "(" + InstanceProviderAPI.InstanceColumns.STATUS + "=? or " +  InstanceProviderAPI.InstanceColumns.STATUS + "=?) and " + InstanceProviderAPI.InstanceColumns.JR_FORM_ID + "=? and  ("+ InstanceProviderAPI.InstanceColumns.LAST_STATUS_CHANGE_DATE + " BETWEEN '"+finaldate +"' and '"+curDate+"')";
         Log.i("Selectiion",selection);
-        String[] selectionArgs = {InstanceProviderAPI.STATUS_ATTACHMENT_NOT_SENT ,InstanceProviderAPI.STATUS_ATTACHMENT_SENDING_FAILED,formName};
+        String[] selectionArgs = {InstanceProviderAPI.STATUS_ATTACHMENT_NOT_SENT ,InstanceProviderAPI.STATUS_ATTACHMENT_SENDING_FAILED,formId};
         Cursor c = managedQuery(InstanceProviderAPI.InstanceColumns.CONTENT_URI, null, selection, selectionArgs,null);
+        Log.i("Attachment Not sent",Integer.toString(c.getCount()));
         return c;
     }
 
-    private Cursor getSentCursor(String formName, String finaldate, String curDate) {
+    private Cursor getSentCursor(String formId, String finaldate, String curDate) {
 
-        String selection =  "(" + InstanceProviderAPI.InstanceColumns.STATUS + "=? or "+ InstanceProviderAPI.InstanceColumns.STATUS + "=? or "+ InstanceProviderAPI.InstanceColumns.STATUS + "=? ) and " + InstanceProviderAPI.InstanceColumns.DISPLAY_NAME + "=? and  ("+ InstanceProviderAPI.InstanceColumns.LAST_STATUS_CHANGE_DATE + " BETWEEN '"+finaldate +"' and '"+curDate+"')";
+        String selection =  "(" + InstanceProviderAPI.InstanceColumns.STATUS + "=? or "+ InstanceProviderAPI.InstanceColumns.STATUS + "=? or "+ InstanceProviderAPI.InstanceColumns.STATUS + "=? ) and " + InstanceProviderAPI.InstanceColumns.JR_FORM_ID + "=? and  ("+ InstanceProviderAPI.InstanceColumns.LAST_STATUS_CHANGE_DATE + " BETWEEN '"+finaldate +"' and '"+curDate+"')";
         Log.i("Selectiion",selection);
-        String[] selectionArgs = {InstanceProviderAPI.STATUS_SUBMITTED, InstanceProviderAPI.STATUS_ATTACHMENT_NOT_SENT,InstanceProviderAPI.STATUS_ATTACHMENT_SENDING_FAILED ,formName};
+        String[] selectionArgs = {InstanceProviderAPI.STATUS_SUBMITTED, InstanceProviderAPI.STATUS_ATTACHMENT_NOT_SENT,InstanceProviderAPI.STATUS_ATTACHMENT_SENDING_FAILED ,formId};
         Cursor c = managedQuery(InstanceProviderAPI.InstanceColumns.CONTENT_URI, null, selection, selectionArgs,null);
         return c;
 
     }
 
 
-    private Cursor getCompletedCursor(String formName, String finaldate, String curDate) {
+    private Cursor getCompletedCursor(String formId, String finaldate, String curDate) {
 
 
-        String selection =  "(" + InstanceProviderAPI.InstanceColumns.STATUS + "=? or " + InstanceProviderAPI.InstanceColumns.STATUS + "=? or " + InstanceProviderAPI.InstanceColumns.STATUS + "=? or "+ InstanceProviderAPI.InstanceColumns.STATUS +"=? or "+ InstanceProviderAPI.InstanceColumns.STATUS + "=? ) and " + InstanceProviderAPI.InstanceColumns.DISPLAY_NAME + "=? and  ("+ InstanceProviderAPI.InstanceColumns.LAST_STATUS_CHANGE_DATE + " BETWEEN '"+finaldate +"' and '"+curDate+"')";
-        Log.i("Selectiion",selection);
-        String[] selectionArgs = {InstanceProviderAPI.STATUS_COMPLETE,InstanceProviderAPI.STATUS_SUBMITTED, InstanceProviderAPI.STATUS_ATTACHMENT_NOT_SENT , InstanceProviderAPI.STATUS_SUBMISSION_FAILED,InstanceProviderAPI.STATUS_ATTACHMENT_SENDING_FAILED,formName};
+        String selection =  "(" + InstanceProviderAPI.InstanceColumns.STATUS + "=? or " + InstanceProviderAPI.InstanceColumns.STATUS + "=? or " + InstanceProviderAPI.InstanceColumns.STATUS + "=? or "+ InstanceProviderAPI.InstanceColumns.STATUS +"=? or "+ InstanceProviderAPI.InstanceColumns.STATUS + "=? ) and " + InstanceProviderAPI.InstanceColumns.JR_FORM_ID + "=? and  ("+ InstanceProviderAPI.InstanceColumns.LAST_STATUS_CHANGE_DATE + " BETWEEN '"+finaldate +"' and '"+curDate+"')";
+        Log.i("FormID",formId);
+        String[] selectionArgs = {InstanceProviderAPI.STATUS_COMPLETE,InstanceProviderAPI.STATUS_SUBMITTED, InstanceProviderAPI.STATUS_ATTACHMENT_NOT_SENT , InstanceProviderAPI.STATUS_SUBMISSION_FAILED,InstanceProviderAPI.STATUS_ATTACHMENT_SENDING_FAILED,formId};
         Cursor c = managedQuery(InstanceProviderAPI.InstanceColumns.CONTENT_URI, null, selection, selectionArgs,null);
-            return c;
+        Log.i("Completed",Integer.toString(c.getCount()));
+        return c;
 
     }
 
