@@ -187,7 +187,7 @@ public class FormController {
 				int event = stepToNextEvent(true);
 				while ( event != FormEntryController.EVENT_END_OF_FORM ) {
 					String candidateXPath = getXPath(getFormIndex());
-					// Log.i(t, "xpath: " + candidateXPath);
+					//Log.wtf(t, "xpath: " + candidateXPath);
 					if ( candidateXPath.equals(xPath) ) {
 						returned = getFormIndex();
 						break;
@@ -621,7 +621,7 @@ public class FormController {
      *
      * @return
      */
-    public int stepToNextScreenEvent() throws JavaRosaException {
+    public int  stepToNextScreenEvent() throws JavaRosaException {
         try {
             if (getEvent() != FormEntryController.EVENT_END_OF_FORM) {
                 int event;

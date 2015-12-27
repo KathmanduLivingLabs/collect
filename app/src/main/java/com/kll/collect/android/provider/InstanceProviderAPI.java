@@ -62,6 +62,13 @@ public final class InstanceProviderAPI {
         public static final String LAST_STATUS_CHANGE_DATE = "date";
         public static final String DISPLAY_SUBTEXT = "displaySubtext";
         //public static final String DISPLAY_SUB_SUBTEXT = "displaySubSubtext";
+        public static final String DISTRICT = "district";
+        public static final String VDC = "vdc";
+        public static final String WARD = "ward";
+        public static final String ENUMAREA = "enumeration_area";
+        public static final String RECORDID = "record_id";
+        public static final String SURVEYORID = "surveyor_id";
+
 
 
 //        public static final String DEFAULT_SORT_ORDER = "modified DESC";

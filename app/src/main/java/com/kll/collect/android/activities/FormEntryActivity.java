@@ -28,12 +28,19 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.Locale;
+import java.util.Vector;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.entity.mime.content.ContentBody;
 import org.apache.http.entity.mime.content.InputStreamBody;
 import org.javarosa.core.model.FormIndex;
+import org.javarosa.core.model.SelectChoice;
 import org.javarosa.core.model.data.IAnswerData;
+import org.javarosa.core.model.data.IntegerData;
+import org.javarosa.core.model.data.SelectOneData;
+import org.javarosa.core.model.data.StringData;
+import org.javarosa.core.model.data.helper.Selection;
+import org.javarosa.core.model.instance.TreeReference;
 import org.javarosa.core.services.transport.payload.ByteArrayPayload;
 import org.javarosa.form.api.FormEntryCaption;
 import org.javarosa.form.api.FormEntryController;
@@ -99,6 +106,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore.Images;
+import android.renderscript.Sampler;
 import android.text.InputFilter;
 import android.text.Spanned;
 import android.util.DisplayMetrics;
@@ -243,6 +251,29 @@ public class FormEntryActivity extends Activity implements AnimationListener,
 
 	private ImageButton mNextButton;
 	private ImageButton mBackButton;
+
+	//Presistent Data from Previous Form
+	String mDistrict = null;
+	String mVdc = null;
+	String mWard = null;
+	String mEnum_Area = null;
+	Integer mRecord_Id = null;
+    String mSurveyorId = null;
+
+    public FormIndex districtIndex = null;
+    public FormIndex vdcIndex = null;
+    public FormIndex wardIndex = null;
+    public FormIndex enumAreaIndex = null;
+    public FormIndex recordIdIndex = null;
+    public FormIndex surveyorIdIndex = null;
+
+    public IAnswerData initialDistrictAnswer = null;
+    public IAnswerData initialVdcAnswer = null;
+    public IAnswerData initialWardAnswer = null;
+    public IAnswerData initialEnumAreaAnswer = null;
+    public IAnswerData initialRecordIdAnswer = null;
+    public IAnswerData initialSurveyorIdAnswer = null;
+
 
 
 
@@ -423,6 +454,7 @@ public class FormEntryActivity extends Activity implements AnimationListener,
 
 				if (getContentResolver().getType(uri).equals(InstanceColumns.CONTENT_ITEM_TYPE)) {
 					// get the formId and version for this instance...
+					Log.wtf("Intent Recived ", "From Edit Data");
 					String jrFormId = null;
 					String jrVersion = null;
 					{
@@ -513,7 +545,9 @@ public class FormEntryActivity extends Activity implements AnimationListener,
 						}
 					}
 				} else if (getContentResolver().getType(uri).equals(FormsColumns.CONTENT_ITEM_TYPE)) {
+					Log.wtf("Intent Recived ", "From Collect Data");
 					Cursor c = null;
+					boolean defaultCachePresent = false;
 					try {
 						c = getContentResolver().query(uri, null, null, null,
 								null);
@@ -570,8 +604,41 @@ public class FormEntryActivity extends Activity implements AnimationListener,
 									// yes! -- use this savepoint file
 									instancePath = instanceFile
 											.getAbsolutePath();
+									defaultCachePresent = true;
 									break;
+								}else{
 								}
+
+							}
+							if (!defaultCachePresent) {
+								String jrFormId = c.getString(c.getColumnIndex(FormsColumns.JR_FORM_ID));
+								String jrVersion = c.getString(c.getColumnIndex(FormsColumns.JR_VERSION));
+								String[] selectionArgs = new String[]{jrFormId, jrVersion};
+								String selection = FormsColumns.JR_FORM_ID + "=? AND "
+										+ FormsColumns.JR_VERSION + "=?";
+								String sortOrder = InstanceColumns.LAST_STATUS_CHANGE_DATE + " DESC";
+								Cursor latestInstance = managedQuery(InstanceColumns.CONTENT_URI, null, selection, selectionArgs, sortOrder);
+								Log.wtf("WTF",String.valueOf(latestInstance.getCount()));
+								if (latestInstance.getCount() >= 1) {
+									latestInstance.moveToFirst();
+									mDistrict = latestInstance.getString(latestInstance.getColumnIndex(InstanceColumns.DISTRICT));
+									Log.wtf("District ", mDistrict);
+									mVdc = latestInstance.getString(latestInstance.getColumnIndex(InstanceColumns.VDC));
+									Log.wtf("VDC ", mVdc);
+									mWard = latestInstance.getString(latestInstance.getColumnIndex(InstanceColumns.WARD));
+									Log.wtf("Ward ", mWard);
+									mEnum_Area = latestInstance.getString(latestInstance.getColumnIndex(InstanceColumns.ENUMAREA));
+									Log.wtf("Enumeration Area ", mEnum_Area);
+                                    mSurveyorId = latestInstance.getString(latestInstance.getColumnIndex(InstanceColumns.SURVEYORID));
+                                    Log.wtf("Surveyor ID ", mSurveyorId);
+									mRecord_Id = getLatestUniqueIdFromDb(mDistrict, mVdc, mWard, mEnum_Area);
+									Log.wtf("Record ID", String.valueOf(mRecord_Id));
+								} else{
+									mRecord_Id = 1;
+								}
+
+
+
 							}
 						}
 					} finally {
@@ -627,7 +694,7 @@ public class FormEntryActivity extends Activity implements AnimationListener,
 			FormIndex waiting = formController.getIndexWaitingForData();
 			if (waiting != null) {
 				outState.putString(KEY_XPATH_WAITING_FOR_DATA,
-						formController.getXPath(waiting));
+                        formController.getXPath(waiting));
 			}
 			// save the instance to a temp path...
 			nonblockingCreateSavePointData();
@@ -915,9 +982,9 @@ public class FormEntryActivity extends Activity implements AnimationListener,
 				MenuItem.SHOW_AS_ACTION_IF_ROOM);
 
 		CompatibilityUtils.setShowAsAction(
-				menu.add(0, MENU_HIERARCHY_VIEW, 0, R.string.view_hierarchy)
-						.setIcon(R.drawable.ic_menu_goto),
-				MenuItem.SHOW_AS_ACTION_IF_ROOM);
+                menu.add(0, MENU_HIERARCHY_VIEW, 0, R.string.view_hierarchy)
+                        .setIcon(R.drawable.ic_menu_goto),
+                MenuItem.SHOW_AS_ACTION_IF_ROOM);
 
 		CompatibilityUtils.setShowAsAction(
 				menu.add(0, MENU_LANGUAGES, 0, R.string.change_language)
@@ -925,9 +992,9 @@ public class FormEntryActivity extends Activity implements AnimationListener,
 				MenuItem.SHOW_AS_ACTION_NEVER);
 
 		CompatibilityUtils.setShowAsAction(
-				menu.add(0, MENU_PREFERENCES, 0, R.string.general_preferences)
-						.setIcon(R.drawable.ic_menu_preferences),
-				MenuItem.SHOW_AS_ACTION_NEVER);
+                menu.add(0, MENU_PREFERENCES, 0, R.string.general_preferences)
+                        .setIcon(R.drawable.ic_menu_preferences),
+                MenuItem.SHOW_AS_ACTION_NEVER);
 		return true;
 	}
 
@@ -1027,6 +1094,7 @@ public class FormEntryActivity extends Activity implements AnimationListener,
 		if (formController.currentPromptIsQuestion()) {
 			LinkedHashMap<FormIndex, IAnswerData> answers = ((ODKView) mCurrentView)
 					.getAnswers();
+
             try {
                 FailedConstraint constraint = formController.saveAllScreenAnswers(answers, evaluateConstraints);
                 if (constraint != null) {
@@ -1135,7 +1203,7 @@ public class FormEntryActivity extends Activity implements AnimationListener,
 
 		} else {
 			InfoLogger.geolog("GeoPointActivity: " + System.currentTimeMillis() +
-					" onLocationChanged(" + mLocationCount + ") null location");
+                    " onLocationChanged(" + mLocationCount + ") null location");
 		}
 	}
 
@@ -1181,6 +1249,130 @@ public class FormEntryActivity extends Activity implements AnimationListener,
 	/*	setTitle(getString(R.string.app_name) + " > "
 				+ formController.getFormTitle());*/
 		int questioncount = formController.getFormDef().getDeepChildCount();
+        if(formController.currentPromptIsQuestion()){
+            if(initialDistrictAnswer != null){
+                if (initialDistrictAnswer.equals(formController.getQuestionPrompt(districtIndex).getAnswerValue())) {
+                    Log.wtf("District", "Same");
+                }else{
+                    Log.wtf("District", "Changed");
+                    initialDistrictAnswer = formController.getQuestionPrompt(districtIndex).getAnswerValue();
+                    mRecord_Id = getLatestUniqueIdFromDb(getValueFromUserInput("district"),getValueFromUserInput("vdc"), getValueFromUserInput("ward"),getValueFromUserInput("enumeration_area"));
+                    IntegerData record_ID = new IntegerData(Integer.valueOf(mRecord_Id));
+                    try{
+                        formController.answerQuestion(recordIdIndex,record_ID);
+                    } catch (JavaRosaException e){
+                        e.printStackTrace();
+                    }
+                }
+            }else{
+                Log.wtf("District","Empty");
+                initialDistrictAnswer = formController.getQuestionPrompt(districtIndex).getAnswerValue();
+                mRecord_Id = getLatestUniqueIdFromDb(getValueFromUserInput("district"),getValueFromUserInput("vdc"), getValueFromUserInput("ward"),getValueFromUserInput("enumeration_area"));
+                IntegerData record_ID = new IntegerData(Integer.valueOf(mRecord_Id));
+                try{
+                    formController.answerQuestion(recordIdIndex,record_ID);
+                } catch (JavaRosaException e){
+                    e.printStackTrace();
+                }
+            }
+
+
+
+            if(initialVdcAnswer != null){
+                if (initialVdcAnswer.equals(formController.getQuestionPrompt(vdcIndex).getAnswerValue())) {
+                    Log.wtf("VDC", "Same");
+                }else{
+                    Log.wtf("VDC", "Changed");
+                    initialVdcAnswer = formController.getQuestionPrompt(vdcIndex).getAnswerValue();
+                    mRecord_Id = getLatestUniqueIdFromDb(getValueFromUserInput("district"),getValueFromUserInput("vdc"), getValueFromUserInput("ward"),getValueFromUserInput("enumeration_area"));
+                    IntegerData record_ID = new IntegerData(Integer.valueOf(mRecord_Id));
+                    try{
+                        formController.answerQuestion(recordIdIndex,record_ID);
+                    } catch (JavaRosaException e){
+                        e.printStackTrace();
+                    }
+                }
+            }else{
+                Log.wtf("VDC","Empty");
+                initialVdcAnswer = formController.getQuestionPrompt(vdcIndex).getAnswerValue();
+                mRecord_Id = getLatestUniqueIdFromDb(getValueFromUserInput("district"),getValueFromUserInput("vdc"), getValueFromUserInput("ward"),getValueFromUserInput("enumeration_area"));
+                IntegerData record_ID = new IntegerData(Integer.valueOf(mRecord_Id));
+                try{
+                    formController.answerQuestion(recordIdIndex,record_ID);
+                } catch (JavaRosaException e){
+                    e.printStackTrace();
+                }
+            }
+
+
+
+
+            if(initialWardAnswer != null){
+                if (initialWardAnswer.equals(formController.getQuestionPrompt(wardIndex).getAnswerValue())) {
+                    Log.wtf("Ward", "Same");
+                }else{
+                    Log.wtf("Ward", "Changed");
+                    initialWardAnswer = formController.getQuestionPrompt(wardIndex).getAnswerValue();
+                    mRecord_Id = getLatestUniqueIdFromDb(getValueFromUserInput("district"),getValueFromUserInput("vdc"), getValueFromUserInput("ward"),getValueFromUserInput("enumeration_area"));
+                    IntegerData record_ID = new IntegerData(Integer.valueOf(mRecord_Id));
+                    try{
+                        formController.answerQuestion(recordIdIndex,record_ID);
+                    } catch (JavaRosaException e){
+                        e.printStackTrace();
+                    }
+                }
+            }else{
+                Log.wtf("Ward","Empty");
+                initialWardAnswer = formController.getQuestionPrompt(wardIndex).getAnswerValue();
+                mRecord_Id = getLatestUniqueIdFromDb(getValueFromUserInput("district"),getValueFromUserInput("vdc"), getValueFromUserInput("ward"),getValueFromUserInput("enumeration_area"));
+                IntegerData record_ID = new IntegerData(Integer.valueOf(mRecord_Id));
+                try{
+                    formController.answerQuestion(recordIdIndex,record_ID);
+                } catch (JavaRosaException e){
+                    e.printStackTrace();
+                }
+            }
+
+
+
+            if(initialEnumAreaAnswer != null){
+                if (initialEnumAreaAnswer.equals(formController.getQuestionPrompt(enumAreaIndex).getAnswerValue())) {
+                    Log.wtf("Enumeration Area", "Same");
+                }else{
+                    Log.wtf("Enumeration Area", "Changed");
+                    initialEnumAreaAnswer = formController.getQuestionPrompt(enumAreaIndex).getAnswerValue();
+                    mRecord_Id = getLatestUniqueIdFromDb(getValueFromUserInput("district"),getValueFromUserInput("vdc"), getValueFromUserInput("ward"),getValueFromUserInput("enumeration_area"));
+                    IntegerData record_ID = new IntegerData(Integer.valueOf(mRecord_Id));
+                    try{
+                        formController.answerQuestion(recordIdIndex,record_ID);
+                    } catch (JavaRosaException e){
+                        e.printStackTrace();
+                    }
+                }
+            }else{
+                Log.wtf("Enumeration Area","Empty");
+                initialEnumAreaAnswer = formController.getQuestionPrompt(enumAreaIndex).getAnswerValue();
+                mRecord_Id = getLatestUniqueIdFromDb(getValueFromUserInput("district"),getValueFromUserInput("vdc"), getValueFromUserInput("ward"),getValueFromUserInput("enumeration_area"));
+                IntegerData record_ID = new IntegerData(Integer.valueOf(mRecord_Id));
+                try{
+                    formController.answerQuestion(recordIdIndex,record_ID);
+                } catch (JavaRosaException e){
+                    e.printStackTrace();
+                }
+            }
+
+
+
+
+
+
+
+
+
+
+
+        }
+
 
 		switch (event) {
 		case FormEntryController.EVENT_BEGINNING_OF_FORM:
@@ -1415,8 +1607,7 @@ public class FormEntryActivity extends Activity implements AnimationListener,
 
 				if(swipeCase == NEXT){
 
-
-					Log.i("progressValue", Double.toString(progressValue));
+					Log.wtf("progressValue", Double.toString(progressValue));
 
 				}
 				if (swipeCase == PREVIOUS){
@@ -1493,7 +1684,7 @@ public class FormEntryActivity extends Activity implements AnimationListener,
         String saveName = formController.getSubmissionMetadata().instanceName;
 		Log.i("Save name",Boolean.toString(mAdminPreferences.getBoolean("savename_from_input", true)));
         if(mAdminPreferences.getBoolean("savename_from_input", true)) {
-			Log.i("Save name",mAdminPreferences.getString("defaultsave_field",getString(R.string.default_save_name)));
+			Log.i("Save name", mAdminPreferences.getString("defaultsave_field", getString(R.string.default_save_name)));
 			if(!mAdminPreferences.getString("defaultsave_field",getString(R.string.default_save_name)).equals("")) {
 
 
@@ -1535,6 +1726,51 @@ public class FormEntryActivity extends Activity implements AnimationListener,
 
         return saveName;
     }
+
+
+
+    public String getValueFromUserInput(String key) {
+        //TODO
+        FormController formController = Collect.getInstance()
+                .getFormController();
+        String answer = null;
+
+
+        try {
+            ByteArrayPayload submissionXml = formController.getSubmissionXml();
+            InputStream submissionInput = submissionXml.getPayloadStream();
+            XmlPullParserFactory xmlFactoryObject = XmlPullParserFactory.newInstance();
+            XmlPullParser myparser = xmlFactoryObject.newPullParser();
+            myparser.setInput(new StringReader(IOUtils.toString(submissionInput, "UTF-8")));
+            Log.wtf("WTF", IOUtils.toString(submissionInput, "UTF-8"));
+            answer = parseXML(key, myparser);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (XmlPullParserException e){
+            e.printStackTrace();
+        }
+
+        return answer;
+    }
+
+    public String parseXML(String valuesToGet, XmlPullParser xmlToParse){
+        String saveName = "";
+        String[] fields = valuesToGet.split("\\s+");
+        System.out.println(xmlToParse.getAttributeCount());
+        for (int i=0; i < fields.length; i++){
+            String userinput = getValueFromXML(xmlToParse,fields[i]);
+            Log.i("PARSINGKEY",fields[i]);
+            if (userinput != null) {
+                saveName = saveName + userinput + " ";
+            }
+
+        }
+
+
+        return saveName;
+    }
+
 
     public String getValueFromXML(XmlPullParser xml, String key){
         String result = null;
@@ -2048,7 +2284,7 @@ public class FormEntryActivity extends Activity implements AnimationListener,
 		mAlertDialog.setCancelable(false);
 		mAlertDialog.setButton(getString(R.string.discard_group), quitListener);
 		mAlertDialog.setButton2(getString(R.string.delete_repeat_no),
-				quitListener);
+                quitListener);
 		mAlertDialog.show();
 	}
 
@@ -2070,6 +2306,7 @@ public class FormEntryActivity extends Activity implements AnimationListener,
         synchronized (saveDialogLock) {
 		    mSaveToDiskTask = new SaveToDiskTask(getIntent().getData(), exit,
 				complete, updatedSaveName);
+			Log.wtf("URI",getIntent().getDataString());
 	    	mSaveToDiskTask.setFormSavedListener(this);
 		    showDialog(SAVING_DIALOG);
             // show dialog before we execute...
@@ -2186,7 +2423,7 @@ public class FormEntryActivity extends Activity implements AnimationListener,
 
 		// attempt to remove any scratch file
 		File temp = SaveToDiskTask.savepointFile(formController
-				.getInstancePath());
+                .getInstancePath());
 		if (temp.exists()) {
 			temp.delete();
 		}
@@ -2314,57 +2551,57 @@ public class FormEntryActivity extends Activity implements AnimationListener,
 		}
 		mAlertDialog = new AlertDialog.Builder(this)
 				.setSingleChoiceItems(languages, selected,
-						new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog,
-												int whichButton) {
-								FormController formController = Collect
-										.getInstance().getFormController();
-								// Update the language in the content provider
-								// when selecting a new
-								// language
-								ContentValues values = new ContentValues();
-								values.put(FormsColumns.LANGUAGE,
-										languages[whichButton]);
-								String selection = FormsColumns.FORM_FILE_PATH
-										+ "=?";
-								String selectArgs[] = {mFormPath};
-								int updated = getContentResolver().update(
-										FormsColumns.CONTENT_URI, values,
-										selection, selectArgs);
-								Log.i(t, "Updated language to: "
-										+ languages[whichButton] + " in "
-										+ updated + " rows");
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog,
+                                                int whichButton) {
+                                FormController formController = Collect
+                                        .getInstance().getFormController();
+                                // Update the language in the content provider
+                                // when selecting a new
+                                // language
+                                ContentValues values = new ContentValues();
+                                values.put(FormsColumns.LANGUAGE,
+                                        languages[whichButton]);
+                                String selection = FormsColumns.FORM_FILE_PATH
+                                        + "=?";
+                                String selectArgs[] = {mFormPath};
+                                int updated = getContentResolver().update(
+                                        FormsColumns.CONTENT_URI, values,
+                                        selection, selectArgs);
+                                Log.i(t, "Updated language to: "
+                                        + languages[whichButton] + " in "
+                                        + updated + " rows");
 
-								Collect.getInstance()
-										.getActivityLogger()
-										.logInstanceAction(
-												this,
-												"createLanguageDialog",
-												"changeLanguage."
-														+ languages[whichButton]);
-								formController
-										.setLanguage(languages[whichButton]);
-								dialog.dismiss();
-								if (formController.currentPromptIsQuestion()) {
-									saveAnswersForCurrentScreen(DO_NOT_EVALUATE_CONSTRAINTS);
-								}
-								refreshCurrentView();
-							}
-						})
+                                Collect.getInstance()
+                                        .getActivityLogger()
+                                        .logInstanceAction(
+                                                this,
+                                                "createLanguageDialog",
+                                                "changeLanguage."
+                                                        + languages[whichButton]);
+                                formController
+                                        .setLanguage(languages[whichButton]);
+                                dialog.dismiss();
+                                if (formController.currentPromptIsQuestion()) {
+                                    saveAnswersForCurrentScreen(DO_NOT_EVALUATE_CONSTRAINTS);
+                                }
+                                refreshCurrentView();
+                            }
+                        })
 				.setTitle(getString(R.string.change_language))
 				.setNegativeButton(getString(R.string.do_not_change),
-						new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog,
-												int whichButton) {
-								Collect.getInstance()
-										.getActivityLogger()
-										.logInstanceAction(this,
-												"createLanguageDialog",
-												"cancel");
-							}
-						}).create();
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog,
+                                                int whichButton) {
+                                Collect.getInstance()
+                                        .getActivityLogger()
+                                        .logInstanceAction(this,
+                                                "createLanguageDialog",
+                                                "cancel");
+                            }
+                        }).create();
 		mAlertDialog.show();
 	}
 
@@ -2676,8 +2913,8 @@ public class FormEntryActivity extends Activity implements AnimationListener,
 	public void onAnimationRepeat(Animation animation) {
 		// Added by AnimationListener interface.
 		Log.i(t, "onAnimationRepeat "
-				+ ((animation == mInAnimation) ? "in"
-				: ((animation == mOutAnimation) ? "out" : "other")));
+                + ((animation == mInAnimation) ? "in"
+                : ((animation == mOutAnimation) ? "out" : "other")));
 	}
 
 	@Override
@@ -2716,6 +2953,73 @@ public class FormEntryActivity extends Activity implements AnimationListener,
 		CompatibilityUtils.invalidateOptionsMenu(this);
 
         Collect.getInstance().setExternalDataManager(task.getExternalDataManager());
+        setQuestionIndex(formController);
+
+		if ( mWard != null){
+			IntegerData ward = new IntegerData(Integer.valueOf(mWard));
+			try {
+				formController.answerQuestion(wardIndex, ward);
+			} catch (JavaRosaException e) {
+				e.printStackTrace();
+			}
+		}
+
+		if ( mEnum_Area != null){
+			IntegerData eno_area = new IntegerData(Integer.valueOf(mEnum_Area));
+			try {
+				formController.answerQuestion(enumAreaIndex, eno_area);
+			} catch (JavaRosaException e) {
+				e.printStackTrace();
+			}
+		}
+
+		if (mRecord_Id != null){
+			IntegerData record_ID = new IntegerData(Integer.valueOf(mRecord_Id));
+			try{
+				formController.answerQuestion(recordIdIndex,record_ID);
+			} catch (JavaRosaException e){
+				e.printStackTrace();
+			}
+		}
+
+		if ( mDistrict != null){
+            FormEntryPrompt prompt = formController.getQuestionPrompt(districtIndex);
+			SelectChoice district_choice = getSelectChoiceFromValue(prompt, mDistrict);
+			SelectOneData district = new SelectOneData(new Selection(district_choice));
+						try {
+							formController.answerQuestion(districtIndex, district );
+						} catch (JavaRosaException e) {
+							e.printStackTrace();
+						}
+			}
+
+        if ( mVdc != null) {
+            FormEntryPrompt prompt = formController.getQuestionPrompt(vdcIndex);
+            SelectChoice vdc_choice = getSelectChoiceFromValue(prompt, mVdc);
+            SelectOneData vdc = new SelectOneData(new Selection(vdc_choice));
+            try {
+                formController.answerQuestion(vdcIndex, vdc );
+            } catch (JavaRosaException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (mSurveyorId != null){
+            StringData surveyor_id = new StringData(mSurveyorId);
+            try {
+                formController.answerQuestion(surveyorIdIndex, surveyor_id);
+            } catch (JavaRosaException e) {
+                e.printStackTrace();
+            }
+
+            setInitialValuesForSix(formController);
+
+
+
+        }
+
+
+
 
 		// Set the language if one has already been set in the past
 		String[] languageTest = formController.getLanguages();
@@ -2806,7 +3110,111 @@ public class FormEntryActivity extends Activity implements AnimationListener,
 		refreshCurrentView();
 	}
 
-	/**
+
+
+
+    public SelectChoice getSelectChoiceFromValue(FormEntryPrompt prompt, String value){
+
+        Vector<SelectChoice> items = prompt.getSelectChoices();
+        String[] choices = new String[items.size()];
+
+
+        for (int i = 0; i < items.size(); i++) {
+            choices[i] = items.get(i).getValue();
+
+        }
+
+        int pos = -1;
+        for (int i = 0; i < choices.length; i++) {
+            if (choices[i].equals(value)) {
+                pos = i;
+            }
+        }
+
+        Log.wtf("Secect Coices From Value", String.valueOf(pos) );
+
+        if (pos == -1){
+            return null;
+        }
+
+
+
+        return items.get(pos);
+    }
+
+
+    public void setQuestionIndex(FormController formController){
+        districtIndex = formController.getIndexFromXPath("question./NHRP_dec_4/building_damage_assessment[1]/hh_data[1]/hh_address[1]/hh_address_district[1]/district[1]");
+        if(districtIndex == null){
+            districtIndex = formController.getIndexFromXPath("question./Training_form_dec21/building_damage_assessment[1]/hh_data[1]/hh_address[1]/hh_address_district[1]/district[1]");
+            Log.wtf("District","Index Still Null");
+        }
+        vdcIndex = formController.getIndexFromXPath("question./NHRP_dec_4/building_damage_assessment[1]/hh_data[1]/hh_address[1]/hh_address_vdc[1]/vdc[1]");
+        if (vdcIndex == null){
+            vdcIndex = formController.getIndexFromXPath("question./Training_form_dec21/building_damage_assessment[1]/hh_data[1]/hh_address[1]/vdc[1]");
+            Log.wtf("VDC","Index Still Null");
+        }
+        wardIndex = formController.getIndexFromXPath("question./NHRP_dec_4/building_damage_assessment[1]/hh_data[1]/hh_address[1]/hh_address_ward[1]/ward[1]");
+        if (wardIndex == null){
+            wardIndex = formController.getIndexFromXPath("question./Training_form_dec21/building_damage_assessment[1]/hh_data[1]/hh_address[1]/hh_address_ward[1]/ward[1]");
+            Log.wtf("Ward", "Index Still Null");
+        }
+        enumAreaIndex = formController.getIndexFromXPath("question./NHRP_dec_4/building_damage_assessment[1]/hh_data[1]/hh_address[1]/hh_address_ward[1]/enumeration_area[1]");
+        if (enumAreaIndex== null){
+            enumAreaIndex = formController.getIndexFromXPath("question./Training_form_dec21/building_damage_assessment[1]/hh_data[1]/hh_address[1]/hh_address_ward[1]/enumeration_area[1]");
+            Log.wtf("Enumeration Area","Index Still Null");
+        }
+        recordIdIndex = formController.getIndexFromXPath("question./NHRP_dec_4/building_damage_assessment[1]/hh_data[1]/hh_address[1]/hh_address_ward[1]/house_no[1]");
+        if (recordIdIndex == null){
+            recordIdIndex = formController.getIndexFromXPath("question./Training_form_dec21/building_damage_assessment[1]/hh_data[1]/hh_address[1]/hh_address_ward[1]/house_no[1]");
+            Log.wtf("Record ID", "Index Still Null");
+
+        }
+        surveyorIdIndex = formController.getIndexFromXPath("question./NHRP_dec_4/building_damage_assessment[1]/start_page[1]/enumerator_id[1]");
+        if (surveyorIdIndex == null){
+            surveyorIdIndex = formController.getIndexFromXPath("question./Training_form_dec21/enumerator_id[1]");
+            Log.wtf("Surveyor ID", "Index Still Null");
+        }
+    }
+
+
+
+    public int getLatestUniqueIdFromDb(String distrct, String vdc, String ward, String enum_area){
+        Intent intent = getIntent();
+        if (intent != null) {
+            Uri uri = intent.getData();
+            Cursor c = getContentResolver().query(uri, null, null, null, null);
+            c.moveToFirst();
+            String formid = c.getString(c.getColumnIndex(FormsColumns.JR_FORM_ID));
+            String formversion = c.getString(c.getColumnIndex(FormsColumns.JR_VERSION));
+            String[] selectionArgs = new String[]{formid, formversion, distrct, vdc, ward, enum_area};
+            String selection = InstanceColumns.JR_FORM_ID + "=? AND "
+                    + InstanceColumns.JR_VERSION + "=? AND " + InstanceColumns.DISTRICT + "=? AND " + InstanceColumns.VDC + "=? AND " + InstanceColumns.WARD + "=? AND " + InstanceColumns.ENUMAREA + "=?";
+            String sortOrder = InstanceColumns.RECORDID + " DESC";
+            Cursor compositeInstance = managedQuery(InstanceColumns.CONTENT_URI, null, selection, selectionArgs, sortOrder);
+            if (compositeInstance.getCount() >= 1) {
+                compositeInstance.moveToFirst();
+                return compositeInstance.getInt(compositeInstance.getColumnIndex(InstanceColumns.RECORDID)) + 1;
+            }
+            c.close();
+
+        }
+
+
+        return 1;
+    }
+
+    private void setInitialValuesForSix(FormController fc){
+        initialDistrictAnswer = fc.getQuestionPrompt(districtIndex).getAnswerValue();
+        if (initialDistrictAnswer != null){
+            Log.wtf("District", initialDistrictAnswer.toString());
+        }
+        initialVdcAnswer = fc.getQuestionPrompt(vdcIndex).getAnswerValue();
+        initialWardAnswer = fc.getQuestionPrompt(wardIndex).getAnswerValue();
+        initialEnumAreaAnswer = fc.getQuestionPrompt(enumAreaIndex).getAnswerValue();
+    }
+
+    /**
 	 * called by the FormLoaderTask if something goes wrong.
 	 */
 	@Override

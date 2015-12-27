@@ -18,10 +18,16 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
+import java.io.StringReader;
 
+import org.apache.commons.io.IOUtils;
 import org.javarosa.core.model.FormDef;
 import org.javarosa.core.services.transport.payload.ByteArrayPayload;
 import org.javarosa.form.api.FormEntryController;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlPullParserFactory;
+
 import com.kll.collect.android.R;
 
 import com.kll.collect.android.application.Collect;
@@ -81,6 +87,7 @@ public class SaveToDiskTask extends AsyncTask<Void, String, SaveResult> {
 
         FormController formController = Collect.getInstance().getFormController();
 
+
         publishProgress(Collect.getInstance().getString(R.string.survey_saving_validating_message));
 
         try {
@@ -118,7 +125,7 @@ public class SaveToDiskTask extends AsyncTask<Void, String, SaveResult> {
     	// if there is a meta/instanceName field, be sure we are using the latest value
     	// just in case the validate somehow triggered an update.
     	String updatedSaveName = formController.getSubmissionMetadata().instanceName;
-    	if ( updatedSaveName != null ) {
+        if ( updatedSaveName != null ) {
     		mInstanceName = updatedSaveName;
     	}
 
@@ -145,18 +152,26 @@ public class SaveToDiskTask extends AsyncTask<Void, String, SaveResult> {
     private void updateInstanceDatabase(boolean incomplete, boolean canEditAfterCompleted) {
 
         FormController formController = Collect.getInstance().getFormController();
+        Log.wtf("SaveToDiskTask","Updating Instance Database");
 
         // Update the instance database...
         ContentValues values = new ContentValues();
         if (mInstanceName != null) {
-            values.put(InstanceColumns.DISPLAY_NAME, mInstanceName);
+            values.put(InstanceColumns.STATUS, InstanceProviderAPI.STATUS_COMPLETE);
         }
         if (incomplete || !mMarkCompleted) {
             values.put(InstanceColumns.STATUS, InstanceProviderAPI.STATUS_INCOMPLETE);
         } else {
-            values.put(InstanceColumns.STATUS, InstanceProviderAPI.STATUS_COMPLETE);
+
         }
         // update this whether or not the status is complete...
+        values.put(InstanceColumns.DISPLAY_NAME, mInstanceName);
+        values.put(InstanceColumns.DISTRICT, getValueFromUserInput("district"));
+        values.put(InstanceColumns.VDC, getValueFromUserInput("vdc"));
+        values.put(InstanceColumns.WARD, getValueFromUserInput("ward"));
+        values.put(InstanceColumns.ENUMAREA, getValueFromUserInput("enumeration_area"));
+        values.put(InstanceColumns.RECORDID, getValueFromUserInput("house_no"));
+        values.put(InstanceColumns.SURVEYORID,getValueFromUserInput("enumerator_id"));
         values.put(InstanceColumns.CAN_EDIT_WHEN_COMPLETE, Boolean.toString(canEditAfterCompleted));
 
         // If FormEntryActivity was started with an Instance, just update that instance
@@ -403,6 +418,90 @@ public class SaveToDiskTask extends AsyncTask<Void, String, SaveResult> {
 //
 //        return false;
     }
+
+
+    public String getValueFromUserInput(String key) {
+        //TODO
+        FormController formController = Collect.getInstance()
+                .getFormController();
+        String answer = null;
+
+
+                try {
+                    ByteArrayPayload submissionXml = formController.getSubmissionXml();
+                    InputStream submissionInput = submissionXml.getPayloadStream();
+                    XmlPullParserFactory xmlFactoryObject = XmlPullParserFactory.newInstance();
+                    XmlPullParser myparser = xmlFactoryObject.newPullParser();
+                    myparser.setInput(new StringReader(IOUtils.toString(submissionInput, "UTF-8")));
+                    Log.wtf("WTF", IOUtils.toString(submissionInput, "UTF-8"));
+                    answer = parseXML(key, myparser);
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (XmlPullParserException e){
+                    e.printStackTrace();
+                }
+
+        return answer;
+    }
+
+    public String parseXML(String valuesToGet, XmlPullParser xmlToParse){
+        String saveName = "";
+        String[] fields = valuesToGet.split("\\s+");
+        System.out.println(xmlToParse.getAttributeCount());
+        for (int i=0; i < fields.length; i++){
+            String userinput = getValueFromXML(xmlToParse,fields[i]);
+            Log.i("PARSINGKEY",fields[i]);
+            if (userinput != null) {
+                saveName = saveName + userinput + " ";
+            }
+
+        }
+
+
+        return saveName;
+    }
+
+    //Helper Method to draw values from the XML
+    public String getValueFromXML(XmlPullParser xml, String key){
+        String result = null;
+        try {
+            int event = xml.getEventType();
+            String text = null;
+
+            while (event != XmlPullParser.END_DOCUMENT)
+            {
+                String tag = xml.getName();
+                if (tag != null) {
+                    System.out.println(tag);
+                }else{
+                    System.out.println("Null Tag");
+                }
+
+                switch (event){
+                    case XmlPullParser.START_TAG:
+                        break;
+                    case XmlPullParser.TEXT:
+                        text = xml.getText();
+                        break;
+                    case XmlPullParser.END_TAG:
+                        if(tag.equals(key)){
+                            System.out.println("Match Found");
+                            result = text;
+                            System.out.println(result);
+                        }
+                        break;
+                }
+                event = xml.next();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+
 
     @Override
     protected void onProgressUpdate(String... values) {

@@ -173,7 +173,7 @@ public class SpinnerWidget extends QuestionWidget {
             return null;
         } else {
             SelectChoice sc = mItems.elementAt(i);
-
+            Log.wtf("Selection Choice ","Label Inner Text: " + sc.getLabelInnerText() + " Value: " + sc.getValue() + " ID: " + sc.getTextID());
             return new SelectOneData(new Selection(sc));
         }
     }

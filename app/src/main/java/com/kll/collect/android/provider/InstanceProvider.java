@@ -55,6 +55,7 @@ public class InstanceProvider extends ContentProvider {
 
     private static final int INSTANCES = 1;
     private static final int INSTANCE_ID = 2;
+    private static final int NEWEST_INSTANCE = 3;
 
     private static final UriMatcher sUriMatcher;
 
@@ -70,6 +71,7 @@ public class InstanceProvider extends ContentProvider {
 
         @Override
         public void onCreate(SQLiteDatabase db) {
+            Log.wtf("TABLE CREATED","TABLE CREATED");
            db.execSQL("CREATE TABLE " + INSTANCES_TABLE_NAME + " ("
                + InstanceColumns._ID + " integer primary key, "
                + InstanceColumns.DISPLAY_NAME + " text not null, "
@@ -80,6 +82,12 @@ public class InstanceProvider extends ContentProvider {
                + InstanceColumns.JR_VERSION + " text, "
                + InstanceColumns.STATUS + " text not null, "
                + InstanceColumns.LAST_STATUS_CHANGE_DATE + " date not null, "
+               + InstanceColumns.DISTRICT + " integer, "
+               + InstanceColumns.VDC + " integer, "
+               + InstanceColumns.WARD + " integer, "
+               + InstanceColumns.ENUMAREA + " integer, "
+               + InstanceColumns.RECORDID + " integer, "
+               + InstanceColumns.SURVEYORID + " integer, "
                + InstanceColumns.DISPLAY_SUBTEXT + " text not null );");
         }
 
@@ -138,6 +146,10 @@ public class InstanceProvider extends ContentProvider {
                 qb.appendWhere(InstanceColumns._ID + "=" + uri.getPathSegments().get(1));
                 break;
 
+            case NEWEST_INSTANCE:
+                qb.setProjectionMap(sInstancesProjectionMap);
+                break;
+
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }
@@ -182,7 +194,7 @@ public class InstanceProvider extends ContentProvider {
         }
 
         Long l = Long.valueOf(System.currentTimeMillis());
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(l);
         String now = sdf.format(calendar.getTimeInMillis());
@@ -408,6 +420,12 @@ public class InstanceProvider extends ContentProvider {
         sInstancesProjectionMap.put(InstanceColumns.STATUS, InstanceColumns.STATUS);
         sInstancesProjectionMap.put(InstanceColumns.LAST_STATUS_CHANGE_DATE, InstanceColumns.LAST_STATUS_CHANGE_DATE);
         sInstancesProjectionMap.put(InstanceColumns.DISPLAY_SUBTEXT, InstanceColumns.DISPLAY_SUBTEXT);
+        sInstancesProjectionMap.put(InstanceColumns.DISTRICT, InstanceColumns.DISTRICT);
+        sInstancesProjectionMap.put(InstanceColumns.VDC, InstanceColumns.VDC);
+        sInstancesProjectionMap.put(InstanceColumns.WARD, InstanceColumns.WARD);
+        sInstancesProjectionMap.put(InstanceColumns.ENUMAREA, InstanceColumns.ENUMAREA);
+        sInstancesProjectionMap.put(InstanceColumns.RECORDID, InstanceColumns.RECORDID);
+        sInstancesProjectionMap.put(InstanceColumns.SURVEYORID, InstanceColumns.SURVEYORID);
     }
 
 }
