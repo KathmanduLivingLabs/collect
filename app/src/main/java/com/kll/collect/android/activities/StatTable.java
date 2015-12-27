@@ -176,8 +176,11 @@ public class StatTable extends Activity implements DiskSyncListener{
                 String imei = telephonyManager.getDeviceId();
 
                 for (int i = 0; i < overallStats.size(); i++) {
-                    smsBody = smsBody + seperator + Integer.toString(overallStats.get(i).getNot_sent()) + seperator + imei + seperator + Integer.toString(overallStats.get(i).getAllSent()) + seperator + Integer.toString(overallStats.get(i).getNo_attachment());
-                }
+                    if (overallStats.get(i).getFormID().equals("NHRP_dec_4")) {
+                        smsBody = smsBody + seperator + Integer.toString(overallStats.get(i).getNot_sent()) + seperator + imei + seperator + Integer.toString(overallStats.get(i).getAllSent()) + seperator + Integer.toString(overallStats.get(i).getNo_attachment());
+                    }
+
+                    }
                 Log.i("Message", smsBody);
 
                 smsManager.sendTextMessage(sms_receiver, null, smsBody, null, null);

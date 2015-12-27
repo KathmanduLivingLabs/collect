@@ -260,6 +260,8 @@ public class FormEntryActivity extends Activity implements AnimationListener,
 	Integer mRecord_Id = null;
     String mSurveyorId = null;
 
+    public boolean isSaved;
+
     public FormIndex districtIndex = null;
     public FormIndex vdcIndex = null;
     public FormIndex wardIndex = null;
@@ -340,6 +342,7 @@ public class FormEntryActivity extends Activity implements AnimationListener,
 		mCurrentView = null;
 		mInAnimation = null;
 		mOutAnimation = null;
+        isSaved = false;
 		mGestureDetector = new GestureDetector(this, this);
 		mQuestionHolder = (LinearLayout) findViewById(R.id.questionholder);
 
@@ -1250,11 +1253,12 @@ public class FormEntryActivity extends Activity implements AnimationListener,
 				+ formController.getFormTitle());*/
 		int questioncount = formController.getFormDef().getDeepChildCount();
         if(formController.currentPromptIsQuestion()){
-            if(initialDistrictAnswer != null){
-                if (initialDistrictAnswer.equals(formController.getQuestionPrompt(districtIndex).getAnswerValue())) {
+            if(mDistrict != null){
+                if (mDistrict.equals(getValueFromUserInput("district"))) {
                     Log.wtf("District", "Same");
                 }else{
                     Log.wtf("District", "Changed");
+                    mDistrict = getValueFromUserInput("district");
                     initialDistrictAnswer = formController.getQuestionPrompt(districtIndex).getAnswerValue();
                     mRecord_Id = getLatestUniqueIdFromDb(getValueFromUserInput("district"),getValueFromUserInput("vdc"), getValueFromUserInput("ward"),getValueFromUserInput("enumeration_area"));
                     IntegerData record_ID = new IntegerData(Integer.valueOf(mRecord_Id));
@@ -1267,6 +1271,7 @@ public class FormEntryActivity extends Activity implements AnimationListener,
             }else{
                 Log.wtf("District","Empty");
                 initialDistrictAnswer = formController.getQuestionPrompt(districtIndex).getAnswerValue();
+                mDistrict = getValueFromUserInput("district");
                 mRecord_Id = getLatestUniqueIdFromDb(getValueFromUserInput("district"),getValueFromUserInput("vdc"), getValueFromUserInput("ward"),getValueFromUserInput("enumeration_area"));
                 IntegerData record_ID = new IntegerData(Integer.valueOf(mRecord_Id));
                 try{
@@ -1278,13 +1283,14 @@ public class FormEntryActivity extends Activity implements AnimationListener,
 
 
 
-            if(initialVdcAnswer != null){
-                if (initialVdcAnswer.equals(formController.getQuestionPrompt(vdcIndex).getAnswerValue())) {
+            if(mVdc != null){
+                if (mVdc.equals(getValueFromUserInput("vdc"))) {
                     Log.wtf("VDC", "Same");
                 }else{
-                    Log.wtf("VDC", "Changed");
+                    Log.wtf("VDC","Changed");
                     initialVdcAnswer = formController.getQuestionPrompt(vdcIndex).getAnswerValue();
-                    mRecord_Id = getLatestUniqueIdFromDb(getValueFromUserInput("district"),getValueFromUserInput("vdc"), getValueFromUserInput("ward"),getValueFromUserInput("enumeration_area"));
+                    mVdc = getValueFromUserInput("vdc");
+                    mRecord_Id = getLatestUniqueIdFromDb(getValueFromUserInput("district"), getValueFromUserInput("vdc"), getValueFromUserInput("ward"), getValueFromUserInput("enumeration_area"));
                     IntegerData record_ID = new IntegerData(Integer.valueOf(mRecord_Id));
                     try{
                         formController.answerQuestion(recordIdIndex,record_ID);
@@ -1295,6 +1301,7 @@ public class FormEntryActivity extends Activity implements AnimationListener,
             }else{
                 Log.wtf("VDC","Empty");
                 initialVdcAnswer = formController.getQuestionPrompt(vdcIndex).getAnswerValue();
+                mVdc = getValueFromUserInput("vdc");
                 mRecord_Id = getLatestUniqueIdFromDb(getValueFromUserInput("district"),getValueFromUserInput("vdc"), getValueFromUserInput("ward"),getValueFromUserInput("enumeration_area"));
                 IntegerData record_ID = new IntegerData(Integer.valueOf(mRecord_Id));
                 try{
@@ -1307,12 +1314,13 @@ public class FormEntryActivity extends Activity implements AnimationListener,
 
 
 
-            if(initialWardAnswer != null){
-                if (initialWardAnswer.equals(formController.getQuestionPrompt(wardIndex).getAnswerValue())) {
+            if(mWard != null){
+                if (mWard.equals(getValueFromUserInput("ward"))) {
                     Log.wtf("Ward", "Same");
                 }else{
                     Log.wtf("Ward", "Changed");
                     initialWardAnswer = formController.getQuestionPrompt(wardIndex).getAnswerValue();
+                    mWard = getValueFromUserInput("ward");
                     mRecord_Id = getLatestUniqueIdFromDb(getValueFromUserInput("district"),getValueFromUserInput("vdc"), getValueFromUserInput("ward"),getValueFromUserInput("enumeration_area"));
                     IntegerData record_ID = new IntegerData(Integer.valueOf(mRecord_Id));
                     try{
@@ -1324,6 +1332,7 @@ public class FormEntryActivity extends Activity implements AnimationListener,
             }else{
                 Log.wtf("Ward","Empty");
                 initialWardAnswer = formController.getQuestionPrompt(wardIndex).getAnswerValue();
+                mWard = getValueFromUserInput("ward");
                 mRecord_Id = getLatestUniqueIdFromDb(getValueFromUserInput("district"),getValueFromUserInput("vdc"), getValueFromUserInput("ward"),getValueFromUserInput("enumeration_area"));
                 IntegerData record_ID = new IntegerData(Integer.valueOf(mRecord_Id));
                 try{
@@ -1335,12 +1344,13 @@ public class FormEntryActivity extends Activity implements AnimationListener,
 
 
 
-            if(initialEnumAreaAnswer != null){
-                if (initialEnumAreaAnswer.equals(formController.getQuestionPrompt(enumAreaIndex).getAnswerValue())) {
+            if(mEnum_Area != null){
+                if (mEnum_Area.equals(getValueFromUserInput("enumeration_area"))) {
                     Log.wtf("Enumeration Area", "Same");
                 }else{
                     Log.wtf("Enumeration Area", "Changed");
                     initialEnumAreaAnswer = formController.getQuestionPrompt(enumAreaIndex).getAnswerValue();
+                    mEnum_Area = getValueFromUserInput("enumeration_area");
                     mRecord_Id = getLatestUniqueIdFromDb(getValueFromUserInput("district"),getValueFromUserInput("vdc"), getValueFromUserInput("ward"),getValueFromUserInput("enumeration_area"));
                     IntegerData record_ID = new IntegerData(Integer.valueOf(mRecord_Id));
                     try{
@@ -1352,6 +1362,7 @@ public class FormEntryActivity extends Activity implements AnimationListener,
             }else{
                 Log.wtf("Enumeration Area","Empty");
                 initialEnumAreaAnswer = formController.getQuestionPrompt(enumAreaIndex).getAnswerValue();
+                mEnum_Area = getValueFromUserInput("enumeration_area");
                 mRecord_Id = getLatestUniqueIdFromDb(getValueFromUserInput("district"),getValueFromUserInput("vdc"), getValueFromUserInput("ward"),getValueFromUserInput("enumeration_area"));
                 IntegerData record_ID = new IntegerData(Integer.valueOf(mRecord_Id));
                 try{
@@ -3194,7 +3205,11 @@ public class FormEntryActivity extends Activity implements AnimationListener,
             Cursor compositeInstance = managedQuery(InstanceColumns.CONTENT_URI, null, selection, selectionArgs, sortOrder);
             if (compositeInstance.getCount() >= 1) {
                 compositeInstance.moveToFirst();
-                return compositeInstance.getInt(compositeInstance.getColumnIndex(InstanceColumns.RECORDID)) + 1;
+                if (Collect.getInstance().getContentResolver().getType(uri).equals(InstanceColumns.CONTENT_ITEM_TYPE) || isSaved) {
+                    return compositeInstance.getInt(compositeInstance.getColumnIndex(InstanceColumns.RECORDID));
+                }else{
+                    return compositeInstance.getInt(compositeInstance.getColumnIndex(InstanceColumns.RECORDID)) + 1;
+                }
             }
             c.close();
 
@@ -3234,16 +3249,19 @@ public class FormEntryActivity extends Activity implements AnimationListener,
 	public void savingComplete(SaveResult saveResult) {
 		dismissDialog(SAVING_DIALOG);
 
+
         int saveStatus = saveResult.getSaveResult();
         switch (saveStatus) {
 		case SaveToDiskTask.SAVED:
 			Toast.makeText(this, getString(R.string.data_saved_ok),
 					Toast.LENGTH_SHORT).show();
+            isSaved = true;
 			sendSavedBroadcast();
 			break;
 		case SaveToDiskTask.SAVED_AND_EXIT:
 			Toast.makeText(this, getString(R.string.data_saved_ok),
 					Toast.LENGTH_SHORT).show();
+            isSaved = true;
 			sendSavedBroadcast();
 			finishReturnInstance();
 			break;

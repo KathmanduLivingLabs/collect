@@ -230,8 +230,8 @@ public class InstanceUploaderList extends ListActivity implements
 		}
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Select to Upload");
-		builder.setMessage("Upload with or without Attachments");
-		builder.setPositiveButton("Upload with Attachments", new DialogInterface.OnClickListener() {
+		builder.setMessage("Upload with or without Photos");
+		builder.setPositiveButton("Upload with Photos", new DialogInterface.OnClickListener() {
 
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
@@ -241,7 +241,7 @@ public class InstanceUploaderList extends ListActivity implements
 			}
 		});
 
-		builder.setNegativeButton("Upload without Attachments", new DialogInterface.OnClickListener() {
+		builder.setNegativeButton("Upload without Photos", new DialogInterface.OnClickListener() {
 
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
