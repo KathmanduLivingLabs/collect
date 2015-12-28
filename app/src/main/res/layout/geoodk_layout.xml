@@ -8,9 +8,9 @@
     android:layout_marginRight="0dp"
     android:layout_marginTop="0dp"
     android:orientation="vertical"
-    android:padding="0dp" >
+    android:padding="0dp">
 
-     <TextView
+    <TextView
         android:id="@+id/main_menu_header"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -19,59 +19,236 @@
         android:paddingTop="10dp"
         android:text="@string/geoodk_mainTitle"
         android:textSize="18sp"
-        android:textStyle="bold"/>
+        android:textStyle="bold" />
 
 
-	<ScrollView
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:orientation="vertical" >
-            <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
-				<LinearLayout android:gravity="center_vertical" android:id="@+id/row1" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginBottom="30.0dip">
-					<RelativeLayout android:gravity="center_horizontal" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_weight="50.0">
-						<ImageButton android:gravity="center_horizontal" android:id="@+id/geoodk_collect_butt" android:background="@drawable/state_color" android:layout_width="100.0dip" android:layout_height="100.0dip" android:src="@drawable/geoodk_notes" />
-						<TextView android:gravity="center_horizontal" android:clickable="false" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="15.0dip" android:text="Collect Data" android:layout_below="@+id/geoodk_collect_butt" />
-					</RelativeLayout>
-					<RelativeLayout android:gravity="center" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_weight="50.0">
-						<ImageButton android:id="@+id/geoodk_send_data_butt" android:background="@drawable/state_color" android:layout_width="100.0dip" android:layout_height="100.0dip" android:src="@drawable/data_upload_blue" />
-						<TextView android:clickable="false" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="15.0dip" android:text="Send Data" android:layout_below="@+id/geoodk_send_data_butt" />
-					</RelativeLayout>
-				</LinearLayout>
-				<LinearLayout android:gravity="center_vertical" android:id="@+id/row2" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginBottom="30.0dip">
-					<RelativeLayout android:gravity="center_horizontal" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_weight="50.0">
-						<ImageButton android:gravity="center_horizontal" android:id="@+id/geoodk_send_attachment_butt" android:background="@drawable/state_color" android:layout_width="100.0dip" android:layout_height="100.0dip" android:src="@drawable/ic_attachment" />
-						<TextView android:gravity="center_horizontal" android:clickable="false" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="0.0dip" android:text="Send Attachments" android:layout_below="@+id/geoodk_send_attachment_butt" />
-					</RelativeLayout>
-					<RelativeLayout android:gravity="center" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_weight="50.0">
-						<ImageButton android:id="@+id/geoodk_map_butt" android:background="@drawable/state_color" android:layout_width="100.0dip" android:layout_height="100.0dip" android:src="@drawable/map_data" />
-						<TextView android:clickable="false" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="20.0dip" android:text="Map Data" android:layout_below="@+id/geoodk_map_butt" />
-					</RelativeLayout>
-				</LinearLayout>
-				<LinearLayout android:gravity="center_vertical" android:id="@+id/row3" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginBottom="30.0dip">
-					<RelativeLayout android:gravity="center_horizontal" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_weight="50.0">
-						<ImageButton android:gravity="center_horizontal" android:id="@+id/geoodk_edit_butt" android:background="@drawable/state_color" android:layout_width="100.0dip" android:layout_height="100.0dip" android:src="@drawable/edit_data" />
-						<TextView android:gravity="center_horizontal" android:clickable="false" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="15.0dip" android:text="Edit Data" android:layout_below="@+id/geoodk_edit_butt" />
-					</RelativeLayout>
-					<RelativeLayout android:gravity="center" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_weight="50.0">
-						<ImageButton android:gravity="center_horizontal" android:id="@+id/geoodk_delete_data_butt" android:background="@drawable/state_color" android:layout_width="100.0dip" android:layout_height="100.0dip" android:src="@drawable/delete_data" />
-						<TextView android:clickable="false" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="20.0dip" android:text="Delete Data" android:layout_below="@+id/geoodk_delete_data_butt" />
-					</RelativeLayout>
-				</LinearLayout>
-				<LinearLayout android:gravity="center_vertical" android:id="@+id/row4" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginBottom="30.0dip">
-					<RelativeLayout android:gravity="center_horizontal" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_weight="50.0">
-						<ImageButton android:gravity="center_horizontal" android:id="@+id/geoodk_stat_butt" android:background="@drawable/state_color" android:layout_width="100.0dip" android:layout_height="100.0dip" android:src="@drawable/ic_stat" />
-						<TextView android:gravity="center_horizontal" android:clickable="false" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="30.0dip" android:text="Statistics" android:layout_below="@+id/geoodk_stat_butt" />
-					</RelativeLayout>
-					<RelativeLayout android:gravity="center" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_weight="50.0">
-						<ImageButton android:gravity="center_horizontal" android:id="@+id/geoodk_settings_butt" android:background="@drawable/state_color" android:layout_width="100.0dip" android:layout_height="100.0dip" android:src="@drawable/settings_gear" />
-						<TextView android:clickable="false" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="20.0dip" android:text="Settings" android:layout_below="@+id/geoodk_settings_butt" />
-					</RelativeLayout>
-				</LinearLayout>
-</LinearLayout>
-</ScrollView>
+        <LinearLayout
+            android:id="@+id/row1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="30.0dip"
+            android:gravity="center_vertical">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="50.0"
+                android:gravity="center_horizontal">
+
+                <ImageButton
+                    android:id="@+id/geoodk_collect_butt"
+                    android:layout_width="100.0dip"
+                    android:layout_height="100.0dip"
+                    android:background="@drawable/state_color"
+                    android:gravity="center_horizontal"
+                    android:src="@drawable/geoodk_notes" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/geoodk_collect_butt"
+                    android:layout_marginLeft="15.0dip"
+                    android:clickable="false"
+                    android:gravity="center_horizontal"
+                    android:text="Collect Data" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="50.0"
+                android:gravity="center">
+
+                <ImageButton
+                    android:id="@+id/geoodk_send_data_butt"
+                    android:layout_width="100.0dip"
+                    android:layout_height="100.0dip"
+                    android:background="@drawable/state_color"
+                    android:src="@drawable/data_upload_blue" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/geoodk_send_data_butt"
+                    android:layout_marginLeft="15.0dip"
+                    android:clickable="false"
+                    android:text="Send Data" />
+            </RelativeLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/row2"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="30.0dip"
+            android:gravity="center_vertical">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="50.0"
+                android:gravity="center_horizontal">
+
+                <ImageButton
+                    android:id="@+id/geoodk_send_attachment_butt"
+                    android:layout_width="100.0dip"
+                    android:layout_height="100.0dip"
+                    android:background="@drawable/state_color"
+                    android:gravity="center_horizontal"
+                    android:src="@drawable/ic_attachment" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/geoodk_send_attachment_butt"
+                    android:layout_marginLeft="15.0dip"
+                    android:clickable="false"
+                    android:gravity="center_horizontal"
+                    android:text="Send Photos" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="50.0"
+                android:gravity="center">
+
+                <ImageButton
+                    android:id="@+id/geoodk_map_butt"
+                    android:layout_width="100.0dip"
+                    android:layout_height="100.0dip"
+                    android:background="@drawable/state_color"
+                    android:src="@drawable/map_data" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/geoodk_map_butt"
+                    android:layout_marginLeft="20.0dip"
+                    android:clickable="false"
+                    android:text="Map Data" />
+            </RelativeLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/row3"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="30.0dip"
+            android:gravity="center_vertical">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="50.0"
+                android:gravity="center_horizontal">
+
+                <ImageButton
+                    android:id="@+id/geoodk_edit_butt"
+                    android:layout_width="100.0dip"
+                    android:layout_height="100.0dip"
+                    android:background="@drawable/state_color"
+                    android:gravity="center_horizontal"
+                    android:src="@drawable/edit_data" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/geoodk_edit_butt"
+                    android:layout_marginLeft="15.0dip"
+                    android:clickable="false"
+                    android:gravity="center_horizontal"
+                    android:text="Edit Data" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="50.0"
+                android:gravity="center">
+
+                <ImageButton
+                    android:id="@+id/geoodk_delete_data_butt"
+                    android:layout_width="100.0dip"
+                    android:layout_height="100.0dip"
+                    android:background="@drawable/state_color"
+                    android:gravity="center_horizontal"
+                    android:src="@drawable/delete_data" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/geoodk_delete_data_butt"
+                    android:layout_marginLeft="20.0dip"
+                    android:clickable="false"
+                    android:text="Delete Data" />
+            </RelativeLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/row4"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="30.0dip"
+            android:gravity="center_vertical">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="50.0"
+                android:gravity="center_horizontal">
+
+                <ImageButton
+                    android:id="@+id/geoodk_stat_butt"
+                    android:layout_width="100.0dip"
+                    android:layout_height="100.0dip"
+                    android:background="@drawable/state_color"
+                    android:gravity="center_horizontal"
+                    android:src="@drawable/ic_stat" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/geoodk_stat_butt"
+                    android:layout_marginLeft="30.0dip"
+                    android:clickable="false"
+                    android:gravity="center_horizontal"
+                    android:text="Statistics" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="50.0"
+                android:gravity="center">
+
+                <ImageButton
+                    android:id="@+id/geoodk_settings_butt"
+                    android:layout_width="100.0dip"
+                    android:layout_height="100.0dip"
+                    android:background="@drawable/state_color"
+                    android:gravity="center_horizontal"
+                    android:src="@drawable/settings_gear" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/geoodk_settings_butt"
+                    android:layout_marginLeft="20.0dip"
+                    android:clickable="false"
+                    android:text="Settings" />
+            </RelativeLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical"></ScrollView>
 
 </LinearLayout>

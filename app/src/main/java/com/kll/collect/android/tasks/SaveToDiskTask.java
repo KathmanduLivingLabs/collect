@@ -153,16 +153,17 @@ public class SaveToDiskTask extends AsyncTask<Void, String, SaveResult> {
 
         FormController formController = Collect.getInstance().getFormController();
         Log.wtf("SaveToDiskTask","Updating Instance Database");
+        Log.wtf("Display Name", mInstanceName);
 
         // Update the instance database...
         ContentValues values = new ContentValues();
         if (mInstanceName != null) {
-            values.put(InstanceColumns.STATUS, InstanceProviderAPI.STATUS_COMPLETE);
+            values.put(InstanceColumns.DISPLAY_NAME, mInstanceName);
         }
         if (incomplete || !mMarkCompleted) {
             values.put(InstanceColumns.STATUS, InstanceProviderAPI.STATUS_INCOMPLETE);
         } else {
-
+            values.put(InstanceColumns.STATUS,InstanceProviderAPI.STATUS_COMPLETE);
         }
         // update this whether or not the status is complete...
         values.put(InstanceColumns.DISPLAY_NAME, mInstanceName);
@@ -178,11 +179,11 @@ public class SaveToDiskTask extends AsyncTask<Void, String, SaveResult> {
         if (Collect.getInstance().getContentResolver().getType(mUri).equals(InstanceColumns.CONTENT_ITEM_TYPE)) {
             int updated = Collect.getInstance().getContentResolver().update(mUri, values, null, null);
             if (updated > 1) {
-                Log.w(t, "Updated more than one entry, that's not good: " + mUri.toString());
+                Log.wtf(t, "Updated more than one entry, that's not good: " + mUri.toString());
             } else if (updated == 1) {
-                Log.i(t, "Instance successfully updated");
+                Log.wtf(t, "Instance successfully updated");
             } else {
-                Log.e(t, "Instance doesn't exist but we have its Uri!! " + mUri.toString());
+                Log.wtf(t, "Instance doesn't exist but we have its Uri!! " + mUri.toString());
             }
         } else if (Collect.getInstance().getContentResolver().getType(mUri).equals(FormsColumns.CONTENT_ITEM_TYPE)) {
             // If FormEntryActivity was started with a form, then it's likely the first time we're
@@ -199,12 +200,12 @@ public class SaveToDiskTask extends AsyncTask<Void, String, SaveResult> {
                 Collect.getInstance().getContentResolver()
                         .update(InstanceColumns.CONTENT_URI, values, where, whereArgs);
             if (updated > 1) {
-                Log.w(t, "Updated more than one entry, that's not good: " + instancePath);
+                Log.wtf(t, "Updated more than one entry, that's not good: " + instancePath);
             } else if (updated == 1) {
-                Log.i(t, "Instance found and successfully updated: " + instancePath);
+                Log.wtf(t, "Instance found and successfully updated: " + instancePath);
                 // already existed and updated just fine
             } else {
-                Log.i(t, "No instance found, creating");
+                Log.wtf(t, "No instance found, creating");
                 // Entry didn't exist, so create it.
                 Cursor c = null;
                 try {

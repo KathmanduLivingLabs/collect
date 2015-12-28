@@ -260,6 +260,12 @@ public class FormEntryActivity extends Activity implements AnimationListener,
 	Integer mRecord_Id = null;
     String mSurveyorId = null;
 
+	String firstLoadDistrict = null;
+	String firstLoadVdc = null;
+	String firstLoadWard = null;
+	String firstLoadEnumArea = null;
+	Integer firstLoadRecordId = null;
+
     public boolean isSaved;
 
     public FormIndex districtIndex = null;
@@ -639,6 +645,12 @@ public class FormEntryActivity extends Activity implements AnimationListener,
 								} else{
 									mRecord_Id = 1;
 								}
+                                latestInstance.close();
+								firstLoadDistrict = mDistrict;
+								firstLoadVdc = mVdc;
+								firstLoadWard = mWard;
+								firstLoadEnumArea = mWard;
+								firstLoadRecordId = mRecord_Id;
 
 
 
@@ -697,7 +709,7 @@ public class FormEntryActivity extends Activity implements AnimationListener,
 			FormIndex waiting = formController.getIndexWaitingForData();
 			if (waiting != null) {
 				outState.putString(KEY_XPATH_WAITING_FOR_DATA,
-                        formController.getXPath(waiting));
+						formController.getXPath(waiting));
 			}
 			// save the instance to a temp path...
 			nonblockingCreateSavePointData();
@@ -985,9 +997,9 @@ public class FormEntryActivity extends Activity implements AnimationListener,
 				MenuItem.SHOW_AS_ACTION_IF_ROOM);
 
 		CompatibilityUtils.setShowAsAction(
-                menu.add(0, MENU_HIERARCHY_VIEW, 0, R.string.view_hierarchy)
-                        .setIcon(R.drawable.ic_menu_goto),
-                MenuItem.SHOW_AS_ACTION_IF_ROOM);
+				menu.add(0, MENU_HIERARCHY_VIEW, 0, R.string.view_hierarchy)
+						.setIcon(R.drawable.ic_menu_goto),
+				MenuItem.SHOW_AS_ACTION_IF_ROOM);
 
 		CompatibilityUtils.setShowAsAction(
 				menu.add(0, MENU_LANGUAGES, 0, R.string.change_language)
@@ -995,9 +1007,9 @@ public class FormEntryActivity extends Activity implements AnimationListener,
 				MenuItem.SHOW_AS_ACTION_NEVER);
 
 		CompatibilityUtils.setShowAsAction(
-                menu.add(0, MENU_PREFERENCES, 0, R.string.general_preferences)
-                        .setIcon(R.drawable.ic_menu_preferences),
-                MenuItem.SHOW_AS_ACTION_NEVER);
+				menu.add(0, MENU_PREFERENCES, 0, R.string.general_preferences)
+						.setIcon(R.drawable.ic_menu_preferences),
+				MenuItem.SHOW_AS_ACTION_NEVER);
 		return true;
 	}
 
@@ -1055,7 +1067,7 @@ public class FormEntryActivity extends Activity implements AnimationListener,
 					.logInstanceAction(this, "onOptionsItemSelected",
 							"MENU_SAVE");
 			// don't exit
-			saveDataToDisk(DO_NOT_EXIT, isInstanceComplete(false), null);
+			saveDataToDisk(DO_NOT_EXIT, isInstanceComplete(false), getSaveName());
 			return true;
 		case MENU_HIERARCHY_VIEW:
 			Collect.getInstance()
@@ -1253,6 +1265,8 @@ public class FormEntryActivity extends Activity implements AnimationListener,
 				+ formController.getFormTitle());*/
 		int questioncount = formController.getFormDef().getDeepChildCount();
         if(formController.currentPromptIsQuestion()){
+
+
             if(mDistrict != null){
                 if (mDistrict.equals(getValueFromUserInput("district"))) {
                     Log.wtf("District", "Same");
@@ -1261,6 +1275,20 @@ public class FormEntryActivity extends Activity implements AnimationListener,
                     mDistrict = getValueFromUserInput("district");
                     initialDistrictAnswer = formController.getQuestionPrompt(districtIndex).getAnswerValue();
                     mRecord_Id = getLatestUniqueIdFromDb(getValueFromUserInput("district"),getValueFromUserInput("vdc"), getValueFromUserInput("ward"),getValueFromUserInput("enumeration_area"));
+
+					Intent intent = getIntent();
+					if (intent != null)	{
+						Uri uri = intent.getData();
+					if (Collect.getInstance().getContentResolver().getType(uri).equals(InstanceColumns.CONTENT_ITEM_TYPE)){
+						if (getValueFromUserInput("district").equals(firstLoadDistrict)
+								&& getValueFromUserInput("vdc").equals(firstLoadVdc)
+								&& getValueFromUserInput("ward").equals(firstLoadWard)
+								&& getValueFromUserInput("enumeration_area").equals(firstLoadEnumArea)){
+							mRecord_Id = firstLoadRecordId;
+						}
+					}
+					}
+
                     IntegerData record_ID = new IntegerData(Integer.valueOf(mRecord_Id));
                     try{
                         formController.answerQuestion(recordIdIndex,record_ID);
@@ -1270,15 +1298,9 @@ public class FormEntryActivity extends Activity implements AnimationListener,
                 }
             }else{
                 Log.wtf("District","Empty");
-                initialDistrictAnswer = formController.getQuestionPrompt(districtIndex).getAnswerValue();
+                //initialDistrictAnswer = formController.getQuestionPrompt(districtIndex).getAnswerValue();
                 mDistrict = getValueFromUserInput("district");
                 mRecord_Id = getLatestUniqueIdFromDb(getValueFromUserInput("district"),getValueFromUserInput("vdc"), getValueFromUserInput("ward"),getValueFromUserInput("enumeration_area"));
-                IntegerData record_ID = new IntegerData(Integer.valueOf(mRecord_Id));
-                try{
-                    formController.answerQuestion(recordIdIndex,record_ID);
-                } catch (JavaRosaException e){
-                    e.printStackTrace();
-                }
             }
 
 
@@ -1291,6 +1313,20 @@ public class FormEntryActivity extends Activity implements AnimationListener,
                     initialVdcAnswer = formController.getQuestionPrompt(vdcIndex).getAnswerValue();
                     mVdc = getValueFromUserInput("vdc");
                     mRecord_Id = getLatestUniqueIdFromDb(getValueFromUserInput("district"), getValueFromUserInput("vdc"), getValueFromUserInput("ward"), getValueFromUserInput("enumeration_area"));
+
+					Intent intent = getIntent();
+					if (intent != null)	{
+						Uri uri = intent.getData();
+						if (Collect.getInstance().getContentResolver().getType(uri).equals(InstanceColumns.CONTENT_ITEM_TYPE)){
+							if (getValueFromUserInput("district").equals(firstLoadDistrict)
+									&& getValueFromUserInput("vdc").equals(firstLoadVdc)
+									&& getValueFromUserInput("ward").equals(firstLoadWard)
+									&& getValueFromUserInput("enumeration_area").equals(firstLoadEnumArea)){
+								mRecord_Id = firstLoadRecordId;
+							}
+						}
+					}
+
                     IntegerData record_ID = new IntegerData(Integer.valueOf(mRecord_Id));
                     try{
                         formController.answerQuestion(recordIdIndex,record_ID);
@@ -1300,15 +1336,9 @@ public class FormEntryActivity extends Activity implements AnimationListener,
                 }
             }else{
                 Log.wtf("VDC","Empty");
-                initialVdcAnswer = formController.getQuestionPrompt(vdcIndex).getAnswerValue();
+                //initialVdcAnswer = formController.getQuestionPrompt(vdcIndex).getAnswerValue();
                 mVdc = getValueFromUserInput("vdc");
                 mRecord_Id = getLatestUniqueIdFromDb(getValueFromUserInput("district"),getValueFromUserInput("vdc"), getValueFromUserInput("ward"),getValueFromUserInput("enumeration_area"));
-                IntegerData record_ID = new IntegerData(Integer.valueOf(mRecord_Id));
-                try{
-                    formController.answerQuestion(recordIdIndex,record_ID);
-                } catch (JavaRosaException e){
-                    e.printStackTrace();
-                }
             }
 
 
@@ -1322,7 +1352,21 @@ public class FormEntryActivity extends Activity implements AnimationListener,
                     initialWardAnswer = formController.getQuestionPrompt(wardIndex).getAnswerValue();
                     mWard = getValueFromUserInput("ward");
                     mRecord_Id = getLatestUniqueIdFromDb(getValueFromUserInput("district"),getValueFromUserInput("vdc"), getValueFromUserInput("ward"),getValueFromUserInput("enumeration_area"));
-                    IntegerData record_ID = new IntegerData(Integer.valueOf(mRecord_Id));
+
+					Intent intent = getIntent();
+					if (intent != null)	{
+						Uri uri = intent.getData();
+						if (Collect.getInstance().getContentResolver().getType(uri).equals(InstanceColumns.CONTENT_ITEM_TYPE)){
+							if (getValueFromUserInput("district").equals(firstLoadDistrict)
+									&& getValueFromUserInput("vdc").equals(firstLoadVdc)
+									&& getValueFromUserInput("ward").equals(firstLoadWard)
+									&& getValueFromUserInput("enumeration_area").equals(firstLoadEnumArea)){
+								mRecord_Id = firstLoadRecordId;
+							}
+						}
+					}
+
+					IntegerData record_ID = new IntegerData(Integer.valueOf(mRecord_Id));
                     try{
                         formController.answerQuestion(recordIdIndex,record_ID);
                     } catch (JavaRosaException e){
@@ -1331,15 +1375,9 @@ public class FormEntryActivity extends Activity implements AnimationListener,
                 }
             }else{
                 Log.wtf("Ward","Empty");
-                initialWardAnswer = formController.getQuestionPrompt(wardIndex).getAnswerValue();
+                //initialWardAnswer = formController.getQuestionPrompt(wardIndex).getAnswerValue();
                 mWard = getValueFromUserInput("ward");
                 mRecord_Id = getLatestUniqueIdFromDb(getValueFromUserInput("district"),getValueFromUserInput("vdc"), getValueFromUserInput("ward"),getValueFromUserInput("enumeration_area"));
-                IntegerData record_ID = new IntegerData(Integer.valueOf(mRecord_Id));
-                try{
-                    formController.answerQuestion(recordIdIndex,record_ID);
-                } catch (JavaRosaException e){
-                    e.printStackTrace();
-                }
             }
 
 
@@ -1352,7 +1390,21 @@ public class FormEntryActivity extends Activity implements AnimationListener,
                     initialEnumAreaAnswer = formController.getQuestionPrompt(enumAreaIndex).getAnswerValue();
                     mEnum_Area = getValueFromUserInput("enumeration_area");
                     mRecord_Id = getLatestUniqueIdFromDb(getValueFromUserInput("district"),getValueFromUserInput("vdc"), getValueFromUserInput("ward"),getValueFromUserInput("enumeration_area"));
-                    IntegerData record_ID = new IntegerData(Integer.valueOf(mRecord_Id));
+
+					Intent intent = getIntent();
+					if (intent != null)	{
+						Uri uri = intent.getData();
+						if (Collect.getInstance().getContentResolver().getType(uri).equals(InstanceColumns.CONTENT_ITEM_TYPE)){
+							if (getValueFromUserInput("district").equals(firstLoadDistrict)
+									&& getValueFromUserInput("vdc").equals(firstLoadVdc)
+									&& getValueFromUserInput("ward").equals(firstLoadWard)
+									&& getValueFromUserInput("enumeration_area").equals(firstLoadEnumArea)){
+								mRecord_Id = firstLoadRecordId;
+							}
+						}
+					}
+
+					IntegerData record_ID = new IntegerData(Integer.valueOf(mRecord_Id));
                     try{
                         formController.answerQuestion(recordIdIndex,record_ID);
                     } catch (JavaRosaException e){
@@ -1361,15 +1413,9 @@ public class FormEntryActivity extends Activity implements AnimationListener,
                 }
             }else{
                 Log.wtf("Enumeration Area","Empty");
-                initialEnumAreaAnswer = formController.getQuestionPrompt(enumAreaIndex).getAnswerValue();
+                //initialEnumAreaAnswer = formController.getQuestionPrompt(enumAreaIndex).getAnswerValue();
                 mEnum_Area = getValueFromUserInput("enumeration_area");
                 mRecord_Id = getLatestUniqueIdFromDb(getValueFromUserInput("district"),getValueFromUserInput("vdc"), getValueFromUserInput("ward"),getValueFromUserInput("enumeration_area"));
-                IntegerData record_ID = new IntegerData(Integer.valueOf(mRecord_Id));
-                try{
-                    formController.answerQuestion(recordIdIndex,record_ID);
-                } catch (JavaRosaException e){
-                    e.printStackTrace();
-                }
             }
 
 
@@ -2386,7 +2432,7 @@ public class FormEntryActivity extends Activity implements AnimationListener,
 												"createQuitDialog",
 												"saveAndExit");
 								saveDataToDisk(EXIT, isInstanceComplete(false),
-										null);
+										getSaveName());
 							} else {
 								Collect.getInstance()
 										.getActivityLogger()
@@ -3206,11 +3252,12 @@ public class FormEntryActivity extends Activity implements AnimationListener,
             if (compositeInstance.getCount() >= 1) {
                 compositeInstance.moveToFirst();
                 if (Collect.getInstance().getContentResolver().getType(uri).equals(InstanceColumns.CONTENT_ITEM_TYPE) || isSaved) {
-                    return compositeInstance.getInt(compositeInstance.getColumnIndex(InstanceColumns.RECORDID));
+                    return compositeInstance.getInt(compositeInstance.getColumnIndex(InstanceColumns.RECORDID)) + 1;
                 }else{
                     return compositeInstance.getInt(compositeInstance.getColumnIndex(InstanceColumns.RECORDID)) + 1;
                 }
             }
+            compositeInstance.close();
             c.close();
 
         }

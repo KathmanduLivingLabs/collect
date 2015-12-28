@@ -74,7 +74,7 @@ public class InstanceProvider extends ContentProvider {
             Log.wtf("TABLE CREATED","TABLE CREATED");
            db.execSQL("CREATE TABLE " + INSTANCES_TABLE_NAME + " ("
                + InstanceColumns._ID + " integer primary key, "
-               + InstanceColumns.DISPLAY_NAME + " text not null, "
+               + InstanceColumns.DISPLAY_NAME + " text, "
                + InstanceColumns.SUBMISSION_URI + " text, "
                + InstanceColumns.CAN_EDIT_WHEN_COMPLETE + " text, "
                + InstanceColumns.INSTANCE_FILE_PATH + " text not null, "
@@ -351,7 +351,7 @@ public class InstanceProvider extends ContentProvider {
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
         Long l = Long.valueOf(System.currentTimeMillis());
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(l);
         String now = sdf.format(calendar.getTimeInMillis());
