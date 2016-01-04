@@ -6,6 +6,7 @@ package com.kll.collect.android.provider;
 public class InstanceStatProvider {
     private Integer completed;
     private String formName;
+    private String formID;
     private Integer no_attachment;
     private Integer not_sent;
     private Integer sent;
@@ -63,5 +64,13 @@ public class InstanceStatProvider {
     public void setSent(Integer integer)
     {
         sent = integer;
+    }
+
+    public String getFormID() {
+        return formID;
+    }
+
+    public void setFormID(String formID) {
+        this.formID = formID;
     }
 }

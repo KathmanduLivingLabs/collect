@@ -323,7 +323,7 @@
     <string name="change_oflinelayers_url">Change Offline Layer Location</string>
     <string name="record_geoshape">Record GeoShape</string>
     <string name="title_activity_geo_shape">GeoShapeActivity</string>
-    <string name="geoodk_mainTitle">Data Collection &amp; Mapping</string>
+    <string name="geoodk_mainTitle">Data Collection &amp; Mapping For Epinurse</string>
     <string name="title_activity_geo_trace">GeoTraceActivity</string>
     <string name="view_shape">Edit Shape</string>
     <string name="record_trace">Record GeoTrace</string>
@@ -344,5 +344,8 @@
     <string name="img_compresion">IMAGE COMPRESSION</string>
     <string name="enable_img_compression_summary">Compress image size to reduce upload time and storage</string>
     <string name="enable_img_compression">Enable Image Compression</string>
+    <string name="default_save_name">save_name</string>
+    <string name="default_sms_reciever">9841271222</string>
+    <string name="default_sms_receiver">9841271222</string>
 
 </resources>

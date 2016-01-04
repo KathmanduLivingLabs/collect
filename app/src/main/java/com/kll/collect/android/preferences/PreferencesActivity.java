@@ -43,6 +43,8 @@ import android.preference.PreferenceScreen;
 import android.provider.MediaStore.Images;
 import android.text.InputFilter;
 import android.text.Spanned;
+import android.widget.Button;
+import android.widget.ListView;
 import android.widget.Toast;
 
 /**
@@ -128,6 +130,8 @@ public class PreferencesActivity extends PreferenceActivity implements
 
 		setTitle(getString(R.string.app_name) + " > "
 				+ getString(R.string.general_preferences));
+		ListView view = getListView();
+
 
 		// not super safe, but we're just putting in this mode to help
 		// administrate
@@ -149,7 +153,7 @@ public class PreferencesActivity extends PreferenceActivity implements
 		mEnableImgCompression = (CheckBoxPreference) findPreference(KEY_ENABLE_IMAGE_COMPRESSION);
 		boolean enableImgCompression = mEnableImgCompression.isChecked();
 
-				PreferenceCategory autosendCategory = (PreferenceCategory) findPreference(getString(R.string.autosend));
+		PreferenceCategory autosendCategory = (PreferenceCategory) findPreference(getString(R.string.autosend));
 		mAutosendWifiPreference = (CheckBoxPreference) findPreference(KEY_AUTOSEND_WIFI);
 
 		boolean autosendWifiAvailable = adminPreferences.getBoolean(
@@ -188,7 +192,7 @@ public class PreferencesActivity extends PreferenceActivity implements
 
 			@Override
 			public boolean onPreferenceChange(Preference preference,
-					Object newValue) {
+											  Object newValue) {
 				int index = ((ListPreference) preference)
 						.findIndexOfValue(newValue.toString());
 				String entry = (String) ((ListPreference) preference)
@@ -211,6 +215,7 @@ public class PreferencesActivity extends PreferenceActivity implements
 				return true;
 			}
 		});
+
 		mSmsReceiverPreference = (EditTextPreference) findPreference(KEY_SMS_RECEIVER);
 		mSmsReceiverPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
 			@Override
@@ -246,7 +251,7 @@ public class PreferencesActivity extends PreferenceActivity implements
 				.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
 					@Override
 					public boolean onPreferenceChange(Preference preference,
-							Object newValue) {String url = newValue.toString();
+													  Object newValue) {String url = newValue.toString();
 
 						// remove all trailing "/"s
 						while (url.endsWith("/")) {
@@ -300,7 +305,7 @@ public class PreferencesActivity extends PreferenceActivity implements
 				.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
 					@Override
 					public boolean onPreferenceChange(Preference preference,
-							Object newValue) {
+													  Object newValue) {
 						String pw = newValue.toString();
 
 						if (pw.length() > 0) {
@@ -347,7 +352,7 @@ public class PreferencesActivity extends PreferenceActivity implements
 
 					@Override
 					public boolean onPreferenceChange(Preference preference,
-							Object newValue) {
+													  Object newValue) {
 						int index = ((ListPreference) preference)
 								.findIndexOfValue(newValue.toString());
 						String value = (String) ((ListPreference) preference)
@@ -397,7 +402,7 @@ public class PreferencesActivity extends PreferenceActivity implements
 
 					@Override
 					public boolean onPreferenceChange(Preference preference,
-							Object newValue) {
+													  Object newValue) {
 						int index = ((ListPreference) preference)
 								.findIndexOfValue(newValue.toString());
 						String entry = (String) ((ListPreference) preference)
@@ -419,7 +424,7 @@ public class PreferencesActivity extends PreferenceActivity implements
 
 					@Override
 					public boolean onPreferenceChange(Preference preference,
-							Object newValue) {
+													  Object newValue) {
 						int index = ((ListPreference) preference)
 								.findIndexOfValue(newValue.toString());
 						String entry = (String) ((ListPreference) preference)
@@ -441,7 +446,7 @@ public class PreferencesActivity extends PreferenceActivity implements
 
 					@Override
 					public boolean onPreferenceChange(Preference preference,
-							Object newValue) {
+													  Object newValue) {
 						int index = ((ListPreference) preference)
 								.findIndexOfValue(newValue.toString());
 						String entry = (String) ((ListPreference) preference)
@@ -549,7 +554,7 @@ public class PreferencesActivity extends PreferenceActivity implements
 	}
 
 	private boolean checkReceiver(String sms_receiver) {
-		if((sms_receiver.length()==10 && sms_receiver.startsWith("9")) || (sms_receiver.length()==14 && sms_receiver.startsWith("+9779"))){
+		if((sms_receiver.length()==10 && sms_receiver.startsWith("9")) || (sms_receiver.length()==4)  || (sms_receiver.length()==14 && sms_receiver.startsWith("+9779"))){
 			return true;
 		}else
 		{
@@ -596,7 +601,7 @@ public class PreferencesActivity extends PreferenceActivity implements
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode,
-			Intent intent) {
+									Intent intent) {
 		super.onActivityResult(requestCode, resultCode, intent);
 		if (resultCode == RESULT_CANCELED) {
 			// request was canceled, so do nothing
@@ -604,32 +609,32 @@ public class PreferencesActivity extends PreferenceActivity implements
 		}
 
 		switch (requestCode) {
-		case IMAGE_CHOOSER:
-			String sourceImagePath = null;
+			case IMAGE_CHOOSER:
+				String sourceImagePath = null;
 
-			// get gp of chosen file
-			Uri uri = intent.getData();
-			if (uri.toString().startsWith("file")) {
-				sourceImagePath = uri.toString().substring(6);
-			} else {
-				String[] projection = { Images.Media.DATA };
-				Cursor c = null;
-				try {
-					c = getContentResolver().query(uri, projection, null, null,
-							null);
-					int i = c.getColumnIndexOrThrow(Images.Media.DATA);
-					c.moveToFirst();
-					sourceImagePath = c.getString(i);
-				} finally {
-					if (c != null) {
-						c.close();
+				// get gp of chosen file
+				Uri uri = intent.getData();
+				if (uri.toString().startsWith("file")) {
+					sourceImagePath = uri.toString().substring(6);
+				} else {
+					String[] projection = { Images.Media.DATA };
+					Cursor c = null;
+					try {
+						c = getContentResolver().query(uri, projection, null, null,
+								null);
+						int i = c.getColumnIndexOrThrow(Images.Media.DATA);
+						c.moveToFirst();
+						sourceImagePath = c.getString(i);
+					} finally {
+						if (c != null) {
+							c.close();
+						}
 					}
 				}
-			}
 
-			// setting image path
-			setSplashPath(sourceImagePath);
-			break;
+				// setting image path
+				setSplashPath(sourceImagePath);
+				break;
 		}
 	}
 
@@ -641,7 +646,7 @@ public class PreferencesActivity extends PreferenceActivity implements
 	private InputFilter getWhitespaceFilter() {
 		InputFilter whitespaceFilter = new InputFilter() {
 			public CharSequence filter(CharSequence source, int start, int end,
-					Spanned dest, int dstart, int dend) {
+									   Spanned dest, int dstart, int dend) {
 				for (int i = start; i < end; i++) {
 					if (Character.isWhitespace(source.charAt(i))) {
 						return "";
@@ -661,7 +666,7 @@ public class PreferencesActivity extends PreferenceActivity implements
 	private InputFilter getReturnFilter() {
 		InputFilter returnFilter = new InputFilter() {
 			public CharSequence filter(CharSequence source, int start, int end,
-					Spanned dest, int dstart, int dend) {
+									   Spanned dest, int dstart, int dend) {
 				for (int i = start; i < end; i++) {
 					if (Character.getType((source.charAt(i))) == Character.CONTROL) {
 						return "";
